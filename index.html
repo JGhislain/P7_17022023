@@ -14,7 +14,51 @@
 </head>
 
 <body>
+    <header>
+        <img class="img-titre" src="assets/img/toque_titre.png" alt="image d'une toque de chef">
+        <h1 id="titre-principal" class="titre-principal">
+            Les petits plats
+        </h1>
+    </header>
+    <main>
+        <nav>
+            <form action="/recherche" method="get">
+                <label for="search-bar"></label>
+                <div class="search-container">
+                  <input type="text" id="search-bar" class="search-bar" name="" placeholder="Rechercher une recette">
+                  <button type="submit"><i class="fa fa-search"></i></button>
+                </div>
+            </form>
+            <div class="cadre-filtres">
+                <div class="bouton-ingredients bouton-filtre">
+                    <p class="texte-ingredient texte-bouton">Ingrédients</p>
+                    <i class="fa-solid fa-chevron-down"></i>
+                    <div class="liste-ingredient liste-nav">
+
+                    </div>
+                </div>
+                <div class="bouton-appareils bouton-filtre">
+                    <p class="texte-appareil texte-bouton">Appreils</p>
+                    <i class="fa-solid fa-chevron-down"></i>
+                    <div class="liste-appareil liste-nav">
+                        
+                    </div>
+                </div>
+                <div class="bouton-ustensiles bouton-filtre">
+                    <p class="texte-ustensile texte-bouton">Ustensiles</p>
+                    <i class="fa-solid fa-chevron-down"></i>
+                    <div class="liste-ustensile liste-nav">
+                        
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <section class="cadre-recettes">
+            
+        </section>
+    </main>
     
-    <script src="js/app.js"></script>
+    <script type="module" src="js/app.js"></script>
+    <script type="module" src="assets/json/recipes.js"></script>
 </body>
 </html>

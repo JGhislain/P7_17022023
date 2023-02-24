@@ -1,0 +1,72 @@
+@charset "UTF-8";
+@import url("https://fonts.googleapis.com/css?family=DM+Sans");
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+:root {
+    --couleur-ingredient: #3282F7;
+    --couleur-appareil: #68D9A4;
+    --couleur-ustensile: #ED6454;
+    --couleur-titre: #D04F4F;
+    --couleur-bg: #E5E5E5;
+    --couleur-bg-gris: #E7E7E7;
+    --couleur-photo-abs: #C7BEBE;
+}
+
+*{
+    box-sizing: border-box;
+    font-family: Roboto;
+    font-style: normal;
+}
+html {
+    margin: 1% 5%;
+}
+header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.img-titre {
+    width: 50px;
+}
+.titre-principal {
+    font-family: DM sans;
+    margin: 0;
+    font-weight: 700;
+    color: var(--couleur-titre);
+}
+.search-bar {
+    width: 100%;
+    height: 70px;
+    font-size: 18px;
+    border-radius: 5px;
+    background-color: var(--couleur-bg-gris);
+}
+form {
+    margin: 20px 0;
+}
+.cadre-filtres {
+    width: 50%;
+    display: flex;
+    justify-content: space-between;
+}
+.bouton-filtre {
+    display: flex;
+    align-items: center;
+    width: 170px;
+    height: 70px;
+    justify-content: space-around;
+    border-radius: 5px;
+    color: var(--couleur-bg);
+}
+.bouton-ingredients {
+    background-color: var(--couleur-ingredient);
+}
+.bouton-appareils {
+    background-color: var(--couleur-appareil);
+}
+.bouton-ustensiles {
+    background-color: var(--couleur-ustensile);
+}
+.liste-nav {
+    display: none;
+}
