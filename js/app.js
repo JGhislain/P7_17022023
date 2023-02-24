@@ -6,7 +6,10 @@ console.log(recipes)
 
 //Appel du DOM nécessaire
 
-const sectionRecettes = document.querySelector('.cadre-recettes')
+const sectionRecettes = document.querySelector('.cadre-recettes');
+const cadreListeIngredients = document.querySelector('.liste-ingredient');
+const cadreListeAppareils = document.querySelector('.liste-appareil');
+const cadreListeUstensiles = document.querySelector('.liste-ustensile');
 
 
 //--------------------------------------------------------------------------------------//
@@ -83,3 +86,79 @@ recipes.forEach((recipe) => {
     const recetteElement = creationRecetteElement(recipe);
     sectionRecettes.innerHTML += recetteElement;
 });
+
+//--------------------------------------------------------------------------------------//
+//         Création d'un tableau regroupant tous les ingrédients sans doublons          //
+//--------------------------------------------------------------------------------------//
+
+const listeIngredients = [];
+
+recipes.forEach(recipe => {
+    recipe.ingredients.forEach(ingredient => {
+        const foundIngredient = listeIngredients.filter(item => item.ingredient === ingredient.ingredient);
+        if (foundIngredient.length === 0) {
+            listeIngredients.push(ingredient)
+        }
+    });
+});
+
+//--------------------------------------------------------------------------------------//
+//  Insertion des ingrédients dans le bouton de recherche dans la barre de navigation   //
+//--------------------------------------------------------------------------------------//
+
+listeIngredients.forEach(ingredient => {
+    const ingredientText = document.createTextNode(ingredient.ingredient);
+    const ingredientItem = document.createElement('p');
+    ingredientItem.appendChild(ingredientText);
+    cadreListeIngredients.appendChild(ingredientItem);
+})
+
+//--------------------------------------------------------------------------------------//
+//         Création d'un tableau regroupant tous les appareils sans doublons          //
+//--------------------------------------------------------------------------------------//
+
+const listeAppareils = [];
+
+recipes.forEach(recipe => {
+    const foundAppareil = listeAppareils.find(appareil => appareil === recipe.appliance);
+    if (!foundAppareil) {
+        listeAppareils.push(recipe.appliance)
+    }
+});
+
+//--------------------------------------------------------------------------------------//
+//  Insertion des appareils dans le bouton de recherche dans la barre de navigation   //
+//--------------------------------------------------------------------------------------//
+
+listeAppareils.forEach(appareil => {
+    const appareilText = document.createTextNode(appareil);
+    const appareilItem = document.createElement('p');
+    appareilItem.appendChild(appareilText);
+    cadreListeAppareils.appendChild(appareilItem);
+})
+
+//--------------------------------------------------------------------------------------//
+//         Création d'un tableau regroupant tous les ustensiles sans doublons          //
+//--------------------------------------------------------------------------------------//
+
+const listeUstensiles = [];
+
+recipes.forEach(recipe => {
+    recipe.ustensils.forEach(ustensile => {
+        const foundUstensile = listeUstensiles.find(item => item === ustensile);
+        if (!foundUstensile) {
+            listeUstensiles.push(ustensile)
+        }
+    });
+});
+
+//--------------------------------------------------------------------------------------//
+//  Insertion des appareils dans le bouton de recherche dans la barre de navigation   //
+//--------------------------------------------------------------------------------------//
+
+listeUstensiles.forEach(ustensile => {
+    const ustensileText = document.createTextNode(ustensile);
+    const ustensileItem = document.createElement('p');
+    ustensileItem.appendChild(ustensileText);
+    cadreListeUstensiles.appendChild(ustensileItem);
+})
