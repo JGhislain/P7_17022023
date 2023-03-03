@@ -48,11 +48,11 @@ function creationRecetteElement(recipe) {
     // ---- Cibler les ingrédients et ses quantités ------------------------------------------
     const ingredientsListe = recipe.ingredients.map((ing) => {
         if (ing.quantity && ing.unit) {
-            return `<li class="liste-ingredients"><b>${ing.ingredient}</b>: ${ing.quantity} ${ing.unit}</li>`
+            return `<li class="liste-ingredients"><b>${ing.ingredient}:</b><span class="quantite-ingredients"> ${ing.quantity} ${ing.unit}</span></li>`
         } else if (ing.quantity) {
-            return `<li class="liste-ingredients"><b>${ing.ingredient}</b>: ${ing.quantity}</li>`
+            return `<li class="liste-ingredients"><b>${ing.ingredient}:</b><span class="quantite-ingredients"> ${ing.quantity}</span></li>`
         } else if (ing.unit) {
-          return `<li class="liste-ingredients"><b>${ing.ingredient}</b>: ${ing.unit}</li>`
+          return `<li class="liste-ingredients"><b>${ing.ingredient}:</b><span class="quantite-ingredients"> ${ing.unit}</span></li>`
         } else {
           return `<li class="liste-ingredients"><b>${ing.ingredient}</b></li>`
         }
@@ -71,7 +71,9 @@ function creationRecetteElement(recipe) {
                     <i class="fa-regular fa-clock"></i>
                     <p class="temps-recette">${recipe.time} min</p>
                 </div>
-                <p class="description-recette">${recipe.description}</p>
+                <div class="cadre-description-recette">
+                    <p class="description-recette">${recipe.description}</p>
+                </div>
             </div>
         </div>
     </article>

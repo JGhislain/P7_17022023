@@ -44,6 +44,14 @@ header {
 form {
     margin: 20px 0;
 }
+.bouton-recherche {
+    position: absolute;
+    right: 5.4vw;
+    height: 70px;
+    width: 70px;
+    border-radius: 5px;
+    cursor: pointer;
+}
 .cadre-filtres {
     width: 50%;
     display: flex;
@@ -51,6 +59,10 @@ form {
 }
 .bouton-filtre {
     border-radius: 5px;
+    margin: 0 5px;
+    height: 350px;
+    width: 200px;
+    overflow: overlay;
 }
 .bouton-texte-icone {
     display: flex;
@@ -72,4 +84,58 @@ form {
 }
 .liste-nav {
 
+}
+.cadre-recettes {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+.encart-recette {
+    height: 365px;
+    width: 30%;
+    border-radius: 5px;
+    background-color: var(--couleur-bg-gris);
+    margin: 30px 0;
+}
+.cadre-photo-recette {
+    height: 175px;
+    width: 100%;
+    background-color: var(--couleur-photo-abs);
+}
+.recette {
+    display: flex;
+}
+.cadre-titre-ingredients {
+    width: 50%;
+}
+.titre-recette {
+    font-size: 1.2em;
+    font-weight: normal;
+}
+.ingredients-recette {
+    list-style: none;
+    padding: 0;
+}
+.cadre-temps-description {
+    width: 50%;
+    overflow: hidden;
+    height: 100%;
+}
+.cadre-temps {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    font-weight: bold;
+}
+.temps-recette {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+.cadre-description-recette {
+    height: 120px;
+}
+.description-recette {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    height: 100%;
 }
