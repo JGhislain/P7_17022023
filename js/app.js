@@ -10,6 +10,7 @@ const sectionRecettes = document.querySelector('.cadre-recettes');
 const cadreListeIngredients = document.querySelector('.liste-ingredient');
 const cadreListeAppareils = document.querySelector('.liste-appareil');
 const cadreListeUstensiles = document.querySelector('.liste-ustensile');
+const inputRecherche = document.querySelector('.search-bar');
 
 
 //--------------------------------------------------------------------------------------//
@@ -34,7 +35,7 @@ class RecetteFactory {
 const recetteFactory = new RecetteFactory();
 
 // ---- Création d'un tableau des recettes à partir du tableau des recettes importé-------------
-const ings = recipes.map((recipe) => {
+const lesRecettes = recipes.map((recipe) => {
     const { id, name, servings, ingredients, time, description, appliance, ustensils} = recipe;
     return recetteFactory.creationRecette({ id, name, servings, ingredients, time, description, appliance, ustensils});
 });
@@ -87,6 +88,37 @@ function creationRecetteElement(recipe) {
 recipes.forEach((recipe) => {
     const recetteElement = creationRecetteElement(recipe);
     sectionRecettes.innerHTML += recetteElement;
+});
+
+//--------------------------------------------------------------------------------------//
+//       Fonction pour filtrer les recettes affichées en fonction de la recherche       //
+//--------------------------------------------------------------------------------------//
+
+function filtrerRecettes(texteRecherche) {
+    // ---- On filtre les recettes dont le nom contient le texte de recherche ----------------
+    const recettesFiltrees = lesRecettes.filter(recette => recette.name.toLowerCase().includes(texteRecherche.toLowerCase()));
+    // ---- On supprime les recettes qui ne correspondent plus à la recherche ----------------
+    sectionRecettes.innerHTML = "";
+    recettesFiltrees.forEach((recipe) => {
+        const recetteElement = creationRecetteElement(recipe);
+        sectionRecettes.innerHTML += recetteElement;
+    });
+}
+
+// ---- On écoute les changements sur l'input de recherche -------------------------------
+inputRecherche.addEventListener("input", (event) => {
+    const texteRecherche = event.target.value.trim();
+    // ---- On ne filtre les recettes que si l'utilisateur à tapé au moins 3 lettres ---------
+    if (texteRecherche.length >= 3) {
+        filtrerRecettes(texteRecherche);
+    } else {
+    // ---- Si le texte de recherche est trop court ou VideoColorSpace, on réaffiche toutes les recettes ----
+    sectionRecettes.innerHTML = "";
+    lesRecettes.forEach((recipe) => {
+        const recetteElement = creationRecetteElement(recipe);
+        sectionRecettes.innerHTML += recetteElement;
+    });
+    }
 });
 
 //--------------------------------------------------------------------------------------//
