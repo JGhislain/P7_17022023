@@ -7,6 +7,7 @@ console.log(recipes)
 //Appel du DOM nécessaire
 
 const sectionRecettes = document.querySelector('.cadre-recettes');
+const cadreTags = document.querySelector('.cadre-tags');
 const cadreListeIngredients = document.querySelector('.liste-ingredient');
 const cadreListeAppareils = document.querySelector('.liste-appareil');
 const cadreListeUstensiles = document.querySelector('.liste-ustensile');
@@ -73,7 +74,7 @@ function creationRecetteElement(recipe) {
                     <p class="temps-recette">${recipe.time} min</p>
                 </div>
                 <div class="cadre-description-recette">
-                    <p class="description-recette">${recipe.description}</p>
+                    <div class="description-recette">${recipe.description}</div>
                 </div>
             </div>
         </div>
@@ -155,12 +156,14 @@ recipes.forEach(recipe => {
 //  Insertion des ingrédients dans le bouton de recherche dans la barre de navigation   //
 //--------------------------------------------------------------------------------------//
 
-listeIngredients.forEach(ingredient => {
+/*listeIngredients.forEach(ingredient => {
     const ingredientText = document.createTextNode(ingredient.ingredient);
-    const ingredientItem = document.createElement('p');
+    const ingredientItem = document.createElement('a');
+    ingredientItem.classList.add("tag-ingredient", "tag-liste");
+    ingredientItem.setAttribute("href", "");
     ingredientItem.appendChild(ingredientText);
     cadreListeIngredients.appendChild(ingredientItem);
-})
+})*/
 
 //--------------------------------------------------------------------------------------//
 //         Création d'un tableau regroupant tous les appareils sans doublons          //
@@ -179,12 +182,14 @@ recipes.forEach(recipe => {
 //  Insertion des appareils dans le bouton de recherche dans la barre de navigation   //
 //--------------------------------------------------------------------------------------//
 
-listeAppareils.forEach(appareil => {
+/*listeAppareils.forEach(appareil => {
     const appareilText = document.createTextNode(appareil);
-    const appareilItem = document.createElement('p');
+    const appareilItem = document.createElement('a');
+    appareilItem.classList.add("tag-appareil", "tag-liste");
+    appareilItem.setAttribute("href", "");
     appareilItem.appendChild(appareilText);
     cadreListeAppareils.appendChild(appareilItem);
-})
+})*/
 
 //--------------------------------------------------------------------------------------//
 //         Création d'un tableau regroupant tous les ustensiles sans doublons          //
@@ -205,9 +210,11 @@ recipes.forEach(recipe => {
 //  Insertion des appareils dans le bouton de recherche dans la barre de navigation   //
 //--------------------------------------------------------------------------------------//
 
-listeUstensiles.forEach(ustensile => {
+/*listeUstensiles.forEach(ustensile => {
     const ustensileText = document.createTextNode(ustensile);
-    const ustensileItem = document.createElement('p');
+    const ustensileItem = document.createElement('a');
+    ustensileItem.classList.add("tag-ustensile", "tag-liste");
+    ustensileItem.setAttribute("href", "");
     ustensileItem.appendChild(ustensileText);
     cadreListeUstensiles.appendChild(ustensileItem);
-})
+})*/
