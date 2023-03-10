@@ -102,7 +102,7 @@ function filtrerRecettes(texteRecherche) {
         const ingredientsRecette = recette.ingredients.map((ingredient) => {
             if (typeof ingredient === "object") {
                 // ---- Si l'ingrédient est un objet, on renvoie l'ingrédient sous forme de caractère ----
-                return Object.values(ingredient).join(" ").toLocaleLowerCase();
+                return Object.values(ingredient).join(" ").toLowerCase();
             } else {
                 // ---- Sinon, on renvoie l'ingrédient en minuscule --------------------------------------
                 return ingredient.toLowerCase()
