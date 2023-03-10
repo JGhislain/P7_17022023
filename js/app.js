@@ -95,8 +95,23 @@ recipes.forEach((recipe) => {
 //--------------------------------------------------------------------------------------//
 
 function filtrerRecettes(texteRecherche) {
-    // ---- On filtre les recettes dont le nom contient le texte de recherche ----------------
-    const recettesFiltrees = lesRecettes.filter(recette => recette.name.toLowerCase().includes(texteRecherche.toLowerCase()));
+    // ---- On filtre les recettes dont le nom, la description ou les ingrédients contiennent le texte de recherche ----------------
+    const recettesFiltrees = lesRecettes.filter((recette) => {
+        const nomRecette = recette.name.toLowerCase();
+        const descriptionRecette = recette.description.toLowerCase();
+        const ingredientsRecette = recette.ingredients.map((ingredient) => {
+            if (typeof ingredient === "object") {
+                // ---- Si l'ingrédient est un objet, on renvoie l'ingrédient sous forme de caractère ----
+                return Object.values(ingredient).join(" ").toLocaleLowerCase();
+            } else {
+                // ---- Sinon, on renvoie l'ingrédient en minuscule --------------------------------------
+                return ingredient.toLowerCase()
+            }
+        })
+        .join(" ");
+        const texteRechercheLowerCase = texteRecherche.toLowerCase();
+        return nomRecette.includes(texteRechercheLowerCase) || descriptionRecette.includes(texteRechercheLowerCase) || ingredientsRecette.includes(texteRechercheLowerCase);
+    });
     // ---- On supprime les recettes qui ne correspondent plus à la recherche ----------------
     sectionRecettes.innerHTML = "";
     recettesFiltrees.forEach((recipe) => {
@@ -112,7 +127,7 @@ inputRecherche.addEventListener("input", (event) => {
     if (texteRecherche.length >= 3) {
         filtrerRecettes(texteRecherche);
     } else {
-    // ---- Si le texte de recherche est trop court ou VideoColorSpace, on réaffiche toutes les recettes ----
+    // ---- Si le texte de recherche est trop court ou vide, on réaffiche toutes les recettes ----
     sectionRecettes.innerHTML = "";
     lesRecettes.forEach((recipe) => {
         const recetteElement = creationRecetteElement(recipe);
