@@ -218,10 +218,8 @@ function filtrerIngredients(texteRecherche) {
         const ingredientsFiltresRecette = ingredientsRecette.filter((ing) => 
         ing.toLowerCase().includes(texteRecherche.toLowerCase())
         );
-    // ---- Ajout des ingrédients filtrés de la recette actuelle dans le Set -----------------
         ingredientsFiltresRecette.forEach((ing) => ingredientFiltres.add(ing));
     });
-    // ---- Conversion du Set en tableau pour le renvoyer ------------------------------------
     return [...ingredientFiltres]
 }
 
@@ -230,18 +228,13 @@ function filtrerIngredients(texteRecherche) {
 //                              l'input search-ingredient                               //
 //--------------------------------------------------------------------------------------//
 
-// ---- Sélection de l'élément input search-ingredient -----------------------------------
 inputIngredient.addEventListener('input', () => {
-    // ---- Récupération du texte de recherche dans l'input ----------------------------------
     const texteRecherche = inputIngredient.value.trim();
-    // ---- Si la longueur du texte de recherche est inférieure à 3, on vide la liste d'ingrédients filtrés ----
     if (texteRecherche.length < 3) {
         cadreListeIngredients.innerHTML = '';
         return;
     }
-    // ---- Filtrage des ingrédients en fonction du texte de recherche -----------------------
     const ingredientsFiltres = filtrerIngredients(texteRecherche);
-    // ---- Affichage des ingrédients filtrés ------------------------------------------------
     afficherIngredients(ingredientsFiltres);
 });
 
@@ -251,11 +244,8 @@ inputIngredient.addEventListener('input', () => {
 //--------------------------------------------------------------------------------------//
 
 cadreListeIngredients.addEventListener('click', (event) => {
-    // ---- Si la section "cadre-tags" contient un élément ayant la classe "search-tag" ------
     if(event.target.classList.contains('search-tag')) {
-    // ---- Appel de la fonction pour ajouter le tag à la section des tags -------------------
         ajouterIngredientsTag(event.target.textContent);
-    // ---- On vide la zone de recherche des ingrédients -------------------------------------
         inputIngredient.value = '';
     }
 })
@@ -265,7 +255,6 @@ cadreListeIngredients.addEventListener('click', (event) => {
 //--------------------------------------------------------------------------------------//
 
 function filterRecettesParTag(tags) {
-    // ---- Filtrer les recettes en fonction des tags sélectionnés ---------------------------
     const recettesFiltrees = lesRecettes.filter((recette) => {
         // ---- Vérifie si chaque tag est inclus dans les ingrédients, les appareils ou les ustensiles de la recette ----
         const ingredients = recette.ingredients.map((ing) => ing.ingredient.toLowerCase());
@@ -282,41 +271,33 @@ function filterRecettesParTag(tags) {
 //--------------------------------------------------------------------------------------//
 
 cadreTags.addEventListener('click', () => {
-    // ---- Récupérer les tags sélectionnés en les transformant en tableau -------------------
     const tags = [...cadreTags.querySelectorAll(".tag-search")].map((btn) => btn.textContent.toLowerCase());
-    // ---- Appeler la fonction pour filtrer les recettes avec les tags sélectionnés ---------
     filterRecettesParTag(tags);
 });
 
-// ---- Sélectionner les tags ------------------------------------------------------------
-
+// Sélectionner les tags
 const tags = document.querySelectorAll('.tag');
 
-//--------------------------------------------------------------------------------------//
-//               Fonction pour filtrer les recettes en fonction des Tags                //
-//--------------------------------------------------------------------------------------//
-
-
+// Fonction pour filtrer les recettes
 function filtrerRecettesAvecTags() {
-    // ---- Récupérer les tags sélectionnés --------------------------------------------------
-    const tagsSelectionnes = Array.from(tags).filter(tag => tag.classList.contains('tag-selected'));
-    // ---- Transformer les tags sélectionnés en minuscules ----------------------------------
-    const nomsTags = tagsSelectionnes.map(tag => tag.innerText.toLowerCase());
-    // ---- Filtrer les recettes en fonction des tags sélectionnés ---------------------------
-    const recettesFiltrees = lesRecettes.filter(recette => {
-        // ---- Vérifier si chaque tag sélectionné est présent dans la recette -------------------
-        return nomsTags.every(tag => {
-            const estIngredient = recette.ingredients.some(ingredient => ingredient.ingredient.toLowerCase().includes(tag));
-            const estAppareil = recette.appliance.toLowerCase().includes(tag);
-            const estUstensile = recette.ustensils.some(ustensile => ustensile.toLowerCase().includes(tag));
-            return estIngredient || estAppareil || estUstensile;
-        });
+  // Récupérer les tags sélectionnés
+  const tagsSelectionnes = Array.from(tags).filter(tag => tag.classList.contains('tag-selected'));
+  const nomsTags = tagsSelectionnes.map(tag => tag.innerText.toLowerCase());
+  
+  // Filtrer les recettes en fonction des tags sélectionnés
+  const recettesFiltrees = lesRecettes.filter(recette => {
+    // Vérifier si chaque tag sélectionné est présent dans la recette
+    return nomsTags.every(tag => {
+      const estIngredient = recette.ingredients.some(ingredient => ingredient.ingredient.toLowerCase().includes(tag));
+      const estAppareil = recette.appliance.toLowerCase().includes(tag);
+      const estUstensile = recette.ustensils.some(ustensile => ustensile.toLowerCase().includes(tag));
+      return estIngredient || estAppareil || estUstensile;
     });
+  });
 
-    // ---- Mettre à jour la liste des recettes ----------------------------------------------
-
-    sectionRecettes.innerHTML = "";
-    recettesFiltrees.forEach((recipe) => {
+  // Mettre à jour la liste des recettes
+  sectionRecettes.innerHTML = "";
+  recettesFiltrees.forEach((recipe) => {
     const recetteElement = creationRecetteElement(recipe);
     sectionRecettes.innerHTML += recetteElement;
   });
