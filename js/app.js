@@ -11,6 +11,7 @@ const cadreTags = document.querySelector('.cadre-tags');
 const cadreListeIngredients = document.querySelector('.liste-ingredient');
 const cadreListeAppareils = document.querySelector('.liste-appareil');
 const cadreListeUstensiles = document.querySelector('.liste-ustensile');
+const cadreListeTags = document.querySelector('.liste-tags');
 const inputRecherche = document.querySelector('.search-bar');
 const inputIngredient = document.querySelector('.search-ingredient');
 const inputAppareil = document.querySelector('.search-appareil');
@@ -127,6 +128,8 @@ function filtrerRecettes(texteRecherche) {
 // ---- On écoute les changements sur l'input de recherche -------------------------------
 inputRecherche.addEventListener("input", (event) => {
     const texteRecherche = event.target.value.trim();
+    // Récupérer les tags sélectionnés en les transformant en tableau
+    const tagsSelectionnes = Array.from(tags).filter(tag => tag.classList.contains('tag-selected'));
     // ---- On ne filtre les recettes que si l'utilisateur à tapé au moins 3 lettres ---------
     if (texteRecherche.length >= 3) {
         filtrerRecettes(texteRecherche);
@@ -148,15 +151,13 @@ inputRecherche.addEventListener("input", (event) => {
 
 function ajouterIngredients(tag) {
     // ---- Création d'un élément Div pour chaque ingrédient ---------------------------------
-    const tagElement = document.createElement('div');
+    const tagElement = document.createElement('span');
     // ---- Ajout de la classe "liste-tags" pour l'élément div créé --------------------------
-    tagElement.classList.add('liste-tags');
+    tagElement.classList.add('search-tag');
     // ---- Ajout du HTML dans l'élément div créé, avec le nom de l'ingrédient ---------------
-    tagElement.innerHTML = `
-    <span class="search-tag">${tag}</span>
-    `;
+    tagElement.textContent = tag;
     // ---- Ajout de l'élément div créé à la section "cadreListeIngredients" -----------------
-    cadreListeIngredients.appendChild(tagElement);
+    cadreListeTags.appendChild(tagElement);
 }
 
 //--------------------------------------------------------------------------------------//
@@ -166,7 +167,7 @@ function ajouterIngredients(tag) {
 
 function afficherIngredients(ingredients) {
     // ---- Suppression du HTML précédent de la section "cadreListeIngredients" --------------
-    cadreListeIngredients.innerHTML = "";
+    cadreListeTags.innerHTML = "";
     // ---- Pour chaque ingrédient dans le tableau "ingredients", on appelle la fonction "ajouterIngredients" pour l'ajouter à la section ----
     ingredients.forEach(ingredient => {
         ajouterIngredients(ingredient)
@@ -195,6 +196,12 @@ function ajouterIngredientsTag(tag) {
     xIcone.addEventListener('click', () => {
     // ---- Supprime l'élément span créé au clic sur l'icone ---------------------------------
         cadreTags.removeChild(tagElement);
+        // ---- On supprime les recettes qui ne correspondent plus à la recherche ----------------
+        sectionRecettes.innerHTML = "";
+        lesRecettes.forEach((recipe) => {
+            const recetteElement = creationRecetteElement(recipe);
+            sectionRecettes.innerHTML += recetteElement;
+        });
     });
     // ---- Ajout de l'élément span créé à la section "cadreTags" ----------------------------
     cadreTags.appendChild(tagElement);
@@ -236,7 +243,7 @@ inputIngredient.addEventListener('input', () => {
     const texteRecherche = inputIngredient.value.trim();
     // ---- Si la longueur du texte de recherche est inférieure à 3, on vide la liste d'ingrédients filtrés ----
     if (texteRecherche.length < 3) {
-        cadreListeIngredients.innerHTML = '';
+        cadreListeTags.innerHTML = '';
         return;
     }
     // ---- Filtrage des ingrédients en fonction du texte de recherche -----------------------
@@ -253,10 +260,14 @@ inputIngredient.addEventListener('input', () => {
 cadreListeIngredients.addEventListener('click', (event) => {
     // ---- Si la section "cadre-tags" contient un élément ayant la classe "search-tag" ------
     if(event.target.classList.contains('search-tag')) {
-    // ---- Appel de la fonction pour ajouter le tag à la section des tags -------------------
+        // ---- Appel de la fonction pour ajouter le tag à la section des tags -------------------
         ajouterIngredientsTag(event.target.textContent);
-    // ---- On vide la zone de recherche des ingrédients -------------------------------------
+        // ---- On vide la zone de recherche des ingrédients -------------------------------------
         inputIngredient.value = '';
+        // ---- Récupérer les tags sélectionnés en les transformant en tableau -------------------
+        const tags = [...cadreTags.querySelectorAll(".tag-search")].map((btn) => btn.textContent.toLowerCase());
+        // ---- Appeler la fonction pour filtrer les recettes avec les tags sélectionnés ---------
+        filterRecettesParTag(tags);
     }
 })
 
@@ -276,17 +287,6 @@ function filterRecettesParTag(tags) {
     // ---- Afficher les recettes filtrées ---------------------------------------------------
     sectionRecettes.innerHTML = recettesFiltrees.map((recette) => creationRecetteElement(recette)).join("");
 }
-
-//--------------------------------------------------------------------------------------//
-//         Événement pour lancer la fonction pour filtrer les recette par tags          //
-//--------------------------------------------------------------------------------------//
-
-cadreTags.addEventListener('click', () => {
-    // ---- Récupérer les tags sélectionnés en les transformant en tableau -------------------
-    const tags = [...cadreTags.querySelectorAll(".tag-search")].map((btn) => btn.textContent.toLowerCase());
-    // ---- Appeler la fonction pour filtrer les recettes avec les tags sélectionnés ---------
-    filterRecettesParTag(tags);
-});
 
 // ---- Sélectionner les tags ------------------------------------------------------------
 
@@ -321,3 +321,20 @@ function filtrerRecettesAvecTags() {
     sectionRecettes.innerHTML += recetteElement;
   });
 }
+
+//--------------------------------------------------------------------------------------//
+//    Événement d'écoute sur l'input de recherche en fonction de la présence de tag     //
+//--------------------------------------------------------------------------------------//
+
+inputRecherche.addEventListener('input', () => {
+    // Récupérer les tags sélectionnés en les transformant en tableau
+    const tagsSelectionnes = Array.from(tags).filter(tag => tag.classList.contains('tag-selected'));
+  
+    // Si des tags sont sélectionnés, filtrer les recettes en fonction des tags sélectionnés
+    if (tagsSelectionnes.length > 0) {
+      filtrerRecettesAvecTags(tagsSelectionnes);
+    } else {
+      // Sinon, filtrer les recettes en fonction de la barre de recherche principale
+      filtrerRecettes();
+    }
+  });
