@@ -45,6 +45,9 @@ const lesRecettes = recipes.map((recipe) => {
     return recetteFactory.creationRecette({ id, name, servings, ingredients, time, description, appliance, ustensils});
 });
 
+// ---- Variable global qui stock les recettes actuellement affichées --------------------
+let recettesActuelles = lesRecettes;
+
 //--------------------------------------------------------------------------------------//
 //                 Fonction pour intégrer un élément HTML d'une recette                 //
 //--------------------------------------------------------------------------------------//
@@ -65,7 +68,7 @@ function creationRecetteElement(recipe) {
     }).join('');
 
     return `
-    <article class="encart-recette">
+    <article class="encart-recette" data-id="${recipe.id}">
         <div class="cadre-photo-recette"></div>
         <div class="recette">
             <div class="cadre-titre-ingredients">
@@ -99,50 +102,50 @@ lesRecettes.forEach((recipe) => {
 //       Fonction pour filtrer les recettes affichées en fonction de la recherche       //
 //--------------------------------------------------------------------------------------//
 
-function filtrerRecettes(texteRecherche) {
+function filtrerRecettes(texteRecherche, recettes = lesRecettes) {
     // ---- On filtre les recettes dont le nom, la description ou les ingrédients contiennent le texte de recherche ----------------
-    const recettesFiltrees = lesRecettes.filter((recette) => {
-        const nomRecette = recette.name.toLowerCase();
-        const descriptionRecette = recette.description.toLowerCase();
-        const ingredientsRecette = recette.ingredients.map((ingredient) => {
-            if (typeof ingredient === "object") {
-                // ---- Si l'ingrédient est un objet, on renvoie l'ingrédient sous forme de caractère ----
-                return Object.values(ingredient).join(" ").toLowerCase();
-            } else {
-                // ---- Sinon, on renvoie l'ingrédient en minuscule --------------------------------------
-                return ingredient.toLowerCase()
-            }
-        })
-        .join(" ");
-        const texteRechercheLowerCase = texteRecherche.toLowerCase();
-        return nomRecette.includes(texteRechercheLowerCase) || descriptionRecette.includes(texteRechercheLowerCase) || ingredientsRecette.includes(texteRechercheLowerCase);
+    const recettesFiltrees = recettes.filter((recette) => {
+      const nomRecette = recette.name.toLowerCase();
+      const descriptionRecette = recette.description.toLowerCase();
+      const ingredientsRecette = recette.ingredients.map((ingredient) => {
+        if (typeof ingredient === "object") {
+          // ---- Si l'ingrédient est un objet, on renvoie l'ingrédient sous forme de caractère ----
+          return Object.values(ingredient).join(" ").toLowerCase();
+        } else {
+          // ---- Sinon, on renvoie l'ingrédient en minuscule --------------------------------------
+          return ingredient.toLowerCase();
+        }
+      })
+      .join(" ");
+      const texteRechercheLowerCase = texteRecherche.toLowerCase();
+      return nomRecette.includes(texteRechercheLowerCase) || descriptionRecette.includes(texteRechercheLowerCase) || ingredientsRecette.includes(texteRechercheLowerCase);
     });
-    // ---- On supprime les recettes qui ne correspondent plus à la recherche ----------------
-    sectionRecettes.innerHTML = "";
-    recettesFiltrees.forEach((recipe) => {
-        const recetteElement = creationRecetteElement(recipe);
-        sectionRecettes.innerHTML += recetteElement;
-    });
-}
+  
+    // ---- Retourner les recettes filtrées ----------------
+    return recettesFiltrees;
+  }
 
 // ---- On écoute les changements sur l'input de recherche -------------------------------
 inputRecherche.addEventListener("input", (event) => {
     const texteRecherche = event.target.value.trim();
-    // Récupérer les tags sélectionnés en les transformant en tableau
-    const tagsSelectionnes = Array.from(tags).filter(tag => tag.classList.contains('tag-selected'));
-    // ---- On ne filtre les recettes que si l'utilisateur à tapé au moins 3 lettres ---------
+
+    // ---- On ne filtre les recettes que si l'utilisateur a tapé au moins 3 lettres ---------
     if (texteRecherche.length >= 3) {
-        filtrerRecettes(texteRecherche);
+        const recettesFiltrees = filtrerRecettes(texteRecherche, recettesActuelles); // Utilisez recettesActuelles ici
+        afficherRecettes(recettesFiltrees);
     } else {
-    // ---- Si le texte de recherche est trop court ou vide, on réaffiche toutes les recettes ----
-    sectionRecettes.innerHTML = "";
-    lesRecettes.forEach((recipe) => {
-        const recetteElement = creationRecetteElement(recipe);
-        sectionRecettes.innerHTML += recetteElement;
-    });
+        // ---- Si le texte de recherche est trop court ou vide, on réaffiche toutes les recettes ----
+        afficherRecettes(recettesActuelles); // Utilisez recettesActuelles ici
     }
 });
 
+function afficherRecettes(recettes) {
+sectionRecettes.innerHTML = "";
+recettes.forEach((recipe) => {
+    const recetteElement = creationRecetteElement(recipe);
+    sectionRecettes.innerHTML += recetteElement;
+});
+}
 
 //--------------------------------------------------------------------------------------//
 //       Fonction pour ajouter les ingrédients à la section cadreListeIngrédients       //
@@ -182,20 +185,28 @@ function afficherIngredients(ingredients) {
 function ajouterIngredientsTag(tag) {
     // ---- Création d'un élément span pour chaque ingrédient --------------------------------
     const tagElement = document.createElement('span');
+
     // ---- Ajout de la classe "tag-search" --------------------------------------------------
     tagElement.classList.add('tag-search');
+
     // ---- Ajout du nom de l'ingrédient dans l'élément --------------------------------------
     tagElement.textContent = tag;
+    
     // ---- Création d'un élément i pour l'icone de suppression ------------------------------
     const xIcone = document.createElement('i');
+    
     // ---- Ajout des classes pour l'icone de suppression ------------------------------------
     xIcone.classList.add('fas', 'fa-times', 'icone-fermeture');
+    
     // ---- Ajout de l'icone de suppression --------------------------------------------------
     tagElement.appendChild(xIcone);
+    
     // ---- Ajout d'un événement au clic sur l'icone de suppression pour retirer l'élément ----
     xIcone.addEventListener('click', () => {
-    // ---- Supprime l'élément span créé au clic sur l'icone ---------------------------------
+    
+        // ---- Supprime l'élément span créé au clic sur l'icone ---------------------------------
         cadreTags.removeChild(tagElement);
+    
         // ---- On supprime les recettes qui ne correspondent plus à la recherche ----------------
         sectionRecettes.innerHTML = "";
         lesRecettes.forEach((recipe) => {
@@ -203,8 +214,12 @@ function ajouterIngredientsTag(tag) {
             sectionRecettes.innerHTML += recetteElement;
         });
     });
-    // ---- Ajout de l'élément span créé à la section "cadreTags" ----------------------------
+    
+// ---- Ajout de l'élément span créé à la section "cadreTags" et on supprime la valeur dans la liste des éléments ----
     cadreTags.appendChild(tagElement);
+    inputIngredient.value = "";
+    inputAppareil.value = "";
+    inputUstensile.value = "";
 }
 
 //--------------------------------------------------------------------------------------//
@@ -286,6 +301,7 @@ function filterRecettesParTag(tags) {
     });
     // ---- Afficher les recettes filtrées ---------------------------------------------------
     sectionRecettes.innerHTML = recettesFiltrees.map((recette) => creationRecetteElement(recette)).join("");
+    recettesActuelles = recettesFiltrees;
 }
 
 // ---- Sélectionner les tags ------------------------------------------------------------
@@ -298,43 +314,45 @@ const tags = document.querySelectorAll('.tag');
 
 
 function filtrerRecettesAvecTags() {
-    // ---- Récupérer les tags sélectionnés --------------------------------------------------
-    const tagsSelectionnes = Array.from(tags).filter(tag => tag.classList.contains('tag-selected'));
-    // ---- Transformer les tags sélectionnés en minuscules ----------------------------------
+    // Récupérer les tags sélectionnés
+    const tagsSelectionnes = Array.from(tags).filter(tag => tag.classList.contains('tag-select'));
+
+    // Transformer les tags sélectionnés en minuscules
     const nomsTags = tagsSelectionnes.map(tag => tag.innerText.toLowerCase());
-    // ---- Filtrer les recettes en fonction des tags sélectionnés ---------------------------
-    const recettesFiltrees = lesRecettes.filter(recette => {
-        // ---- Vérifier si chaque tag sélectionné est présent dans la recette -------------------
-        return nomsTags.every(tag => {
-            const estIngredient = recette.ingredients.some(ingredient => ingredient.ingredient.toLowerCase().includes(tag));
-            const estAppareil = recette.appliance.toLowerCase().includes(tag);
-            const estUstensile = recette.ustensils.some(ustensile => ustensile.toLowerCase().includes(tag));
-            return estIngredient || estAppareil || estUstensile;
-        });
+
+    // Filtrer les recettes en fonction des tags sélectionnés
+    const recettesFiltrees = recettesActuelles.filter(recette => {
+        const elementsRecette = [recette.appliance.toLowerCase(), ...recette.ingredients.map(i => i.ingredient.toLowerCase()), ...recette.ustensils.map(u => u.toLowerCase())];
+        return nomsTags.every(tag => elementsRecette.some(e => e.includes(tag)));
     });
 
-    // ---- Mettre à jour la liste des recettes ----------------------------------------------
-
+    // Mettre à jour la liste des recettes
     sectionRecettes.innerHTML = "";
     recettesFiltrees.forEach((recipe) => {
-    const recetteElement = creationRecetteElement(recipe);
-    sectionRecettes.innerHTML += recetteElement;
+        const recetteElement = creationRecetteElement(recipe);
+        sectionRecettes.innerHTML += recetteElement;
   });
 }
 
 //--------------------------------------------------------------------------------------//
-//    Événement d'écoute sur l'input de recherche en fonction de la présence de tag     //
+//   Événement pour ajouter ou retirer une class tag-select au éléments séléctionnées   //
+//  depuis les zones de recherches secondaires et effectuer une recherche de recettes   //
 //--------------------------------------------------------------------------------------//
 
-inputRecherche.addEventListener('input', () => {
-    // Récupérer les tags sélectionnés en les transformant en tableau
-    const tagsSelectionnes = Array.from(tags).filter(tag => tag.classList.contains('tag-selected'));
-  
-    // Si des tags sont sélectionnés, filtrer les recettes en fonction des tags sélectionnés
-    if (tagsSelectionnes.length > 0) {
-      filtrerRecettesAvecTags(tagsSelectionnes);
-    } else {
-      // Sinon, filtrer les recettes en fonction de la barre de recherche principale
-      filtrerRecettes();
-    }
-  });
+
+// ---- Recherche parmis tags ------------------------------------------------------------
+tags.forEach(tag => {
+
+    // ---- On écoute le clic du tag sélectionnées -------------------------------------------
+    tag.addEventListener('click', (event) => {
+
+        // ---- On ajoute ou retire la class à l'élément sélectionnées ---------------------------
+        tag.classList.toggle('tag-select');
+
+        // ---- On vide la zone de recherche secondaire ------------------------------------------
+        inputRecherche.value = "";
+
+        // ---- On appelle la fonction de recherche qui inclus les tags sélectionnées dans la recherche ----
+        filtrerRecettesAvecTags();
+    });
+})
