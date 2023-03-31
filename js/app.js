@@ -445,7 +445,7 @@ function filterRecettesParTag(tags) {
 
 function afficherListeIngredients() {
     // Extraire tous les ingrédients de toutes les recettes
-    const tousLesIngredients = lesRecettes.flatMap((recette) => {
+    const tousLesIngredients = recettesActuelles.flatMap((recette) => {
         return recette.ingredients.map((ingredient) => {
             if (typeof ingredient === 'object') {
                 return ingredient.ingredient.toLowerCase();
@@ -468,7 +468,7 @@ function afficherListeIngredients() {
 
 
 function afficherListeAppareils() {
-    const tousLesAppareils = lesRecettes.map((recette) => recette.appliance.toLowerCase());
+    const tousLesAppareils = recettesActuelles.map((recette) => recette.appliance.toLowerCase());
     const appareilsUniques = Array.from(new Set(tousLesAppareils));
     cadreTagsAppareils.innerHTML = appareilsUniques.map((appareil) => `<span class="search-tag">${appareil}</span>`).join('');
 }
@@ -479,7 +479,7 @@ function afficherListeAppareils() {
 
 
 function afficherListeUstensiles() {
-    const tousLesUstensiles = lesRecettes.flatMap((recette) => recette.ustensils.map((ustensile) => ustensile.toLowerCase()));
+    const tousLesUstensiles = recettesActuelles.flatMap((recette) => recette.ustensils.map((ustensile) => ustensile.toLowerCase()));
     const ustensilesUniques = Array.from(new Set(tousLesUstensiles));
     cadreTagsUstensiles.innerHTML = ustensilesUniques.map((ustensile) => `<span class="search-tag">${ustensile}</span>`).join('');
 }
