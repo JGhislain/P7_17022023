@@ -60,6 +60,18 @@ form {
     border-radius: 5px;
     margin: 0 5px;
 }
+.cadre-tags {
+    margin: 15px 0;
+}
+.tag-search {
+    margin-right: 10px;
+    font-size: 1.2em;
+    border: solid 2px var(--couleur-titre);
+    border-radius: 5px;
+}
+.icone-fermeture {
+    padding: 0 5px;
+}
 .bouton-texte-icone {
     display: flex;
     align-items: center;
@@ -78,12 +90,20 @@ form {
 .bouton-ustensiles {
     background-color: var(--couleur-ustensile);
 }
+.liste-tags {
+    display: flex;
+    flex-wrap: wrap;
+}
 .search-tag {
     background-color: transparent;
     font-size: 1.2em;
     padding: 5px 10px;
     border: none;
     color: var(--couleur-bg);
+    cursor: pointer;
+}
+.search-tag:hover {
+    transform: scale(1.2);
 }
 .search-tag::placeholder {
     color: var(--couleur-bg);
