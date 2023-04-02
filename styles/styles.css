@@ -110,7 +110,7 @@ form {
     flex-wrap: wrap;
 }
 .fermer-cadre {
-    display: none;
+    height: 74px;
 }
 .search-tag {
     background-color: transparent;

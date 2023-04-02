@@ -25,6 +25,10 @@ const inputRecherche = document.querySelector('.search-bar');
 const inputIngredient = document.querySelector('.search-ingredient');
 const inputAppareil = document.querySelector('.search-appareil');
 const inputUstensile = document.querySelector('.search-ustensile');
+const boutonIngredients = document.querySelector('.bouton-ingredients');
+const boutonAppareils = document.querySelector('.bouton-appareils');
+const boutonUstensiles = document.querySelector('.bouton-ustensiles');
+
 
 
 //--------------------------------------------------------------------------------------//
@@ -476,8 +480,8 @@ function filterRecettesParTag(tags) {
 
 function afficherListeIngredients() {
     fermerToutesLesListes();
-    cadreListeIngredients.classList.add("liste-nav");
-    cadreListeIngredients.classList.remove("fermer-cadre");
+    boutonAppareils.classList.add('fermer-cadre');
+    boutonUstensiles.classList.add('fermer-cadre');
     
     // Extraire tous les ingrédients de toutes les recettes
     const tousLesIngredients = recettesActuelles.flatMap((recette) => {
@@ -504,8 +508,10 @@ function afficherListeIngredients() {
 
 
 function afficherListeAppareils() {
-    cadreListeAppareils.classList.add("liste-nav");
-    cadreListeAppareils.classList.remove("fermer-cadre");
+    fermerToutesLesListes();
+    boutonIngredients.classList.add('fermer-cadre');
+    boutonUstensiles.classList.add('fermer-cadre');
+
     const tousLesAppareils = recettesActuelles.map((recette) => recette.appliance.toLowerCase());
     const appareilsUniques = Array.from(new Set(tousLesAppareils));
     cadreTagsAppareils.innerHTML = appareilsUniques.map((appareil) => `<span class="search-tag">${appareil}</span>`).join('');
@@ -518,18 +524,19 @@ function afficherListeAppareils() {
 
 
 function afficherListeUstensiles() {
+    fermerToutesLesListes();
+    boutonIngredients.classList.add('fermer-cadre');
+    boutonAppareils.classList.add('fermer-cadre');
+
     const tousLesUstensiles = recettesActuelles.flatMap((recette) => recette.ustensils.map((ustensile) => ustensile.toLowerCase()));
     const ustensilesUniques = Array.from(new Set(tousLesUstensiles));
     cadreTagsUstensiles.innerHTML = ustensilesUniques.map((ustensile) => `<span class="search-tag">${ustensile}</span>`).join('');
 }
 
 function fermerToutesLesListes() {
-    cadreListeIngredients.classList.add("fermer-cadre");
-    cadreListeIngredients.classList.remove("liste-nav");
-    cadreListeAppareils.classList.add("fermer-cadre");
-    cadreListeAppareils.classList.remove("liste-nav");
-    cadreListeUstensiles.classList.add("fermer-cadre");
-    cadreListeUstensiles.classList.remove("liste-nav");
+    boutonIngredients.classList.remove("fermer-cadre");
+    boutonAppareils.classList.remove("fermer-cadre");
+    boutonUstensiles.classList.remove("fermer-cadre");
 }
 
 //--------------------------------------------------------------------------------------//
