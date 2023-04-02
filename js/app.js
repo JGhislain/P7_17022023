@@ -1,10 +1,16 @@
-//Import du tableau issu du fichier recipes.js
+//--------------------------------------------------------------------------------------//
+//                     Import du tableau issu du fichier recipes.js                     //
+//--------------------------------------------------------------------------------------//
+
 
 import { recipes } from "../assets/json/recipes.js";
 
 console.log(recipes)
 
-//Appel du DOM nécessaire
+//--------------------------------------------------------------------------------------//
+//                               Appel du DOM nécessaire                                //
+//--------------------------------------------------------------------------------------//
+
 
 const sectionRecettes = document.querySelector('.cadre-recettes');
 const cadreTags = document.querySelector('.cadre-tags');
@@ -24,6 +30,8 @@ const inputUstensile = document.querySelector('.search-ustensile');
 //--------------------------------------------------------------------------------------//
 //                       Factory pour créer des objets de recette                       //
 //--------------------------------------------------------------------------------------//
+
+
 class RecetteFactory {
     creationRecette({ id, name, servings, ingredients, time, description, appliance, ustensils}) {
         return {
@@ -42,6 +50,7 @@ class RecetteFactory {
 // ---- Création d'une instance de RecetteFactory ----------------------------------------
 const recetteFactory = new RecetteFactory();
 
+
 // ---- Création d'un tableau des recettes à partir du tableau des recettes importé-------------
 const lesRecettes = recipes.map((recipe) => {
     const { id, name, servings, ingredients, time, description, appliance, ustensils} = recipe;
@@ -52,6 +61,7 @@ const lesRecettes = recipes.map((recipe) => {
 //--------------------------------------------------------------------------------------//
 //                 Fonction pour intégrer un élément HTML d'une recette                 //
 //--------------------------------------------------------------------------------------//
+
 
 function creationRecetteElement(recipe) {
 
@@ -94,17 +104,21 @@ function creationRecetteElement(recipe) {
 //         Injecter les éléments HTML des recettes à la section cadre-recettes          //
 //--------------------------------------------------------------------------------------//
 
+
 lesRecettes.forEach((recipe) => {
     const recetteElement = creationRecetteElement(recipe);
     sectionRecettes.innerHTML += recetteElement;
 });
 
+
 // ---- Variable global qui stock les recettes actuellement affichées --------------------
 let recettesActuelles = lesRecettes;
+
 
 //--------------------------------------------------------------------------------------//
 //       Fonction pour filtrer les recettes affichées en fonction de la recherche       //
 //--------------------------------------------------------------------------------------//
+
 
 function filtrerRecettes(texteRecherche, recettes = lesRecettes) {
 
@@ -145,6 +159,7 @@ function filtrerRecettes(texteRecherche, recettes = lesRecettes) {
 //                  On écoute les changements sur l'input de recherche                  //
 //--------------------------------------------------------------------------------------//
 
+
 inputRecherche.addEventListener("input", (event) => {
     const texteRecherche = event.target.value.trim();
 
@@ -172,6 +187,7 @@ recettes.forEach((recipe) => {
 });
 }
 
+
 //--------------------------------------------------------------------------------------//
 //       Fonction pour ajouter les ingrédients à la section cadreListeTags              //
 //--------------------------------------------------------------------------------------//
@@ -188,6 +204,7 @@ function ajouterIngredients(tag) {
     cadreListeTags.appendChild(tagElement);
 }
 
+
 //--------------------------------------------------------------------------------------//
 //     Fonction pour afficher les tags dans la section cadreListeTags                   //
 //--------------------------------------------------------------------------------------//
@@ -202,8 +219,9 @@ function afficherTag(ingredients) {
     })
 }
 
+
 //--------------------------------------------------------------------------------------//
-//   Fonction pour ajouter un tag à la section cadreTags et le retirer au clic   //
+//   Fonction pour ajouter un tag à la section cadreTags et le retirer au clic          //
 //--------------------------------------------------------------------------------------//
 
 
@@ -248,9 +266,11 @@ function ajouterTag(tag) {
     inputUstensile.value = "";
 }
 
+
 //--------------------------------------------------------------------------------------//
 //           Fonction pour filter les ingrédients en fonction de la recherche           //
 //--------------------------------------------------------------------------------------//
+
 
 // ---- Création d'un Set pour stocker les ingrédients filtrés ---------------------------
 let ingredientFiltres = new Set();
@@ -273,6 +293,7 @@ function filtrerIngredients(texteRecherche) {
     return [...ingredientFiltres]
 }
 
+
 //--------------------------------------------------------------------------------------//
 //           Fonction pour filtrer les appareils en fonction de la recherche            //
 //--------------------------------------------------------------------------------------//
@@ -289,6 +310,7 @@ function filtrerAppareils(texteRecherche) {
     });
     return [...appareilFiltres];
 }
+
 
 //--------------------------------------------------------------------------------------//
 //           Fonction pour filtrer les ustensiles en fonction de la recherche           //
@@ -309,10 +331,12 @@ function filtrerUstensiles(texteRecherche) {
     return [...ustensileFiltres];
 }
 
+
 //--------------------------------------------------------------------------------------//
 //     Événement pour mettre à jour les ingrédients affichés lors de la saisie dans     //
 //                              l'input search-ingredient                               //
 //--------------------------------------------------------------------------------------//
+
 
 // ---- Sélection de l'élément input search-ingredient -----------------------------------
 inputIngredient.addEventListener('input', () => {
@@ -335,6 +359,7 @@ inputIngredient.addEventListener('input', () => {
 //                                   search-appareil                                    //
 //--------------------------------------------------------------------------------------//
 
+
 inputAppareil.addEventListener('input', () => {
     const texteRecherche = inputAppareil.value.trim();
     if (texteRecherche.length < 3) {
@@ -344,6 +369,7 @@ inputAppareil.addEventListener('input', () => {
     const appareilsFiltres = filtrerAppareils(texteRecherche);
     afficherTag(appareilsFiltres);
 });
+
 
 //--------------------------------------------------------------------------------------//
 //  Événement pour mettre à jour les ustensiles affichés lors de la saisie dans l'input //
@@ -361,10 +387,12 @@ inputUstensile.addEventListener('input', () => {
     afficherTag(ustensilesFiltres);
 });
 
+
 //--------------------------------------------------------------------------------------//
 //      Événement pour ajouter un tag à la section cadre-tags lors du clic sur un       //
 //                                     ingrédients                                      //
 //--------------------------------------------------------------------------------------//
+
 
 cadreListeIngredients.addEventListener('click', (event) => {
 
@@ -391,6 +419,7 @@ cadreListeIngredients.addEventListener('click', (event) => {
 //  Événement pour ajouter un tag à la section cadre-tags lors du clic sur un appareil  //
 //--------------------------------------------------------------------------------------//
 
+
 cadreListeAppareils.addEventListener('click', (event) => {
     if (event.target.classList.contains('search-tag')) {
         ajouterTag(event.target.textContent);
@@ -401,6 +430,7 @@ cadreListeAppareils.addEventListener('click', (event) => {
         filterRecettesParTag(tags);
     }
 });
+
 
 //--------------------------------------------------------------------------------------//
 //  Événement pour ajouter un tag à la section cadre-tags lors du clic sur un appareil  //
@@ -417,6 +447,7 @@ cadreListeUstensiles.addEventListener('click', (event) => {
         filterRecettesParTag(tags);
     }
 });
+
 
 //--------------------------------------------------------------------------------------//
 //                      Fonction pour filter les recettes par tags                      //
@@ -444,6 +475,10 @@ function filterRecettesParTag(tags) {
 
 
 function afficherListeIngredients() {
+    fermerToutesLesListes();
+    cadreListeIngredients.classList.add("liste-nav");
+    cadreListeIngredients.classList.remove("fermer-cadre");
+    
     // Extraire tous les ingrédients de toutes les recettes
     const tousLesIngredients = recettesActuelles.flatMap((recette) => {
         return recette.ingredients.map((ingredient) => {
@@ -462,16 +497,20 @@ function afficherListeIngredients() {
     cadreTagsIngredients.innerHTML = ingredientsUniques.map((ingredient) => `<span class="search-tag">${ingredient}</span>`).join('');
 }
 
+
 //--------------------------------------------------------------------------------------//
 //                    Fonction pour afficher la liste des appareils                     //
 //--------------------------------------------------------------------------------------//
 
 
 function afficherListeAppareils() {
+    cadreListeAppareils.classList.add("liste-nav");
+    cadreListeAppareils.classList.remove("fermer-cadre");
     const tousLesAppareils = recettesActuelles.map((recette) => recette.appliance.toLowerCase());
     const appareilsUniques = Array.from(new Set(tousLesAppareils));
     cadreTagsAppareils.innerHTML = appareilsUniques.map((appareil) => `<span class="search-tag">${appareil}</span>`).join('');
 }
+
 
 //--------------------------------------------------------------------------------------//
 //                    Fonction pour afficher la liste des ustensiles                    //
@@ -484,6 +523,14 @@ function afficherListeUstensiles() {
     cadreTagsUstensiles.innerHTML = ustensilesUniques.map((ustensile) => `<span class="search-tag">${ustensile}</span>`).join('');
 }
 
+function fermerToutesLesListes() {
+    cadreListeIngredients.classList.add("fermer-cadre");
+    cadreListeIngredients.classList.remove("liste-nav");
+    cadreListeAppareils.classList.add("fermer-cadre");
+    cadreListeAppareils.classList.remove("liste-nav");
+    cadreListeUstensiles.classList.add("fermer-cadre");
+    cadreListeUstensiles.classList.remove("liste-nav");
+}
 
 //--------------------------------------------------------------------------------------//
 //                        fonction pour vider la liste des tags                         //
@@ -499,6 +546,7 @@ function videListe(event) {
         cadreTagsUstensiles.innerHTML = "";
     }
 }
+
 
 //--------------------------------------------------------------------------------------//
 //           Écouteurs d'évéenements pour afficher les tags ou vider la liste           //

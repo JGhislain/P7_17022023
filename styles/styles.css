@@ -69,6 +69,21 @@ form {
     border: solid 2px var(--couleur-titre);
     border-radius: 5px;
 }
+.input-tag {
+    background-color: transparent;
+    font-size: 1.2em;
+    padding: 5px 10px;
+    border: none;
+    color: var(--couleur-bg);
+    cursor: pointer;
+}
+.input-tag::placeholder {
+    color: var(--couleur-bg);
+}
+.input-tag:focus {
+    outline: none;
+    color: var(--couleur-bg);
+}
 .icone-fermeture {
     padding: 0 5px;
 }
@@ -94,6 +109,9 @@ form {
     display: flex;
     flex-wrap: wrap;
 }
+.fermer-cadre {
+    display: none;
+}
 .search-tag {
     background-color: transparent;
     font-size: 1.2em;
@@ -113,10 +131,6 @@ form {
     color: var(--couleur-bg);
 }
 .liste-nav {
-    margin: 2px 10px;
-}
-.tag-liste {
-    display: inline-flex;
     margin: 2px 10px;
 }
 .cadre-recettes {
