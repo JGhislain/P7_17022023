@@ -11,7 +11,7 @@ import { recipes } from "../assets/json/recipes.js";
 //--------------------------------------------------------------------------------------//
 
 
-const sectionRecettes = document.querySelector('.cadre-recettes');
+const sectionRecettes = document.querySelector('.section-recettes');
 const cadreTags = document.querySelector('.cadre-tags');
 const cadreListeIngredients = document.querySelector('.liste-ingredient');
 const cadreListeAppareils = document.querySelector('.liste-appareil');
@@ -82,17 +82,19 @@ function creationRecetteElement(recipe) {
     return `
     <article class="encart-recette" data-id="${recipe.id}">
         <div class="cadre-photo-recette"></div>
-        <div class="recette">
-            <div class="cadre-titre-ingredients">
+        <div class="cadre-recette">
+            <div class="cadre-titre-temps">
                 <h2 class="titre-recette">${recipe.name}</h2>
-                <ul class="ingredients-recette">${ingredientsListe}</ul>
-            </div>
-            <div class="cadre-temps-description">
                 <div class="cadre-temps">
                     <i class="fa-regular fa-clock"></i>
                     <p class="temps-recette">${recipe.time} min</p>
                 </div>
-                <div class="cadre-description-recette">
+            </div>
+            <div class="recette">
+                <div class="cadre-ingredients">
+                    <ul class="ingredients-recette">${ingredientsListe}</ul>
+                </div>
+                <div class="cadre-description">
                     <div class="description-recette">${recipe.description}</div>
                 </div>
             </div>
@@ -185,7 +187,7 @@ recettes.forEach((recipe) => {
 //--------------------------------------------------------------------------------------//
 
 
-function ajouterIngredients(tag) {
+function ajouterElements(tag) {
     // ---- Création d'un élément Div pour chaque ingrédient ---------------------------------
     const tagElement = document.createElement('span');
     // ---- Ajout de la classe "liste-tags" pour l'élément div créé --------------------------
@@ -202,12 +204,12 @@ function ajouterIngredients(tag) {
 //--------------------------------------------------------------------------------------//
 
 
-function afficherTag(ingredients) {
+function afficherTag(elements) {
     // ---- Suppression du HTML précédent de la section "cadreListeIngredients" --------------
     cadreListeTags.innerHTML = "";
     // ---- Pour chaque ingrédient dans le tableau "ingredients", on appelle la fonction "ajouterIngredients" pour l'ajouter à la section ----
-    ingredients.forEach(ingredient => {
-        ajouterIngredients(ingredient)
+    elements.forEach(element => {
+        ajouterElements(element)
     })
 }
 
@@ -217,11 +219,21 @@ function afficherTag(ingredients) {
 //--------------------------------------------------------------------------------------//
 
 
-function ajouterTag(tag) {
+function ajouterTag(tag, categorie) {
     // ---- Création d'un élément span pour chaque tag ---------------------------------------
     const tagElement = document.createElement('span');
     // ---- Ajout de la classe "tag-search" --------------------------------------------------
     tagElement.classList.add('tag-search');
+    // ---- Ajout d'un background-color en fonction de la catégorie --------------------------
+    if (categorie === "ingredient") {
+        tagElement.style.backgroundColor = "#3282F7"
+    }
+    else if (categorie === "appareil") {
+        tagElement.style.backgroundColor = "#68D9A4"
+    }
+    else if (categorie === "ustensile") {
+        tagElement.style.backgroundColor = "#ED6454"
+    }
     // ---- Ajout du nom de l'ingrédient/ustensil/appareil dans l'élément --------------------
     tagElement.textContent = tag;
     // ---- Création d'un élément i pour l'icone de suppression ------------------------------
@@ -376,7 +388,7 @@ cadreListeIngredients.addEventListener('click', (event) => {
     // ---- Si la section "cadre-tags" contient un élément ayant la classe "search-tag" ------
     if(event.target.classList.contains('search-tag')) {
         // ---- Appel de la fonction pour ajouter le tag à la section des tags -------------------
-        ajouterTag(event.target.textContent);
+        ajouterTag(event.target.textContent, 'ingredient');
         // ---- On vide la zone de recherche des ingrédients -------------------------------------
         inputIngredient.value = '';
         cadreListeTags.innerHTML = '';
@@ -395,7 +407,7 @@ cadreListeIngredients.addEventListener('click', (event) => {
 
 cadreListeAppareils.addEventListener('click', (event) => {
     if (event.target.classList.contains('search-tag')) {
-        ajouterTag(event.target.textContent);
+        ajouterTag(event.target.textContent, 'appareil');
         inputAppareil.value = '';
         cadreListeTags.innerHTML = '';
         const tags = [...cadreTags.querySelectorAll(".tag-search")].map((btn) => btn.textContent.toLowerCase());
@@ -411,7 +423,7 @@ cadreListeAppareils.addEventListener('click', (event) => {
 
 cadreListeUstensiles.addEventListener('click', (event) => {
     if (event.target.classList.contains('search-tag')) {
-        ajouterTag(event.target.textContent);
+        ajouterTag(event.target.textContent, 'ustensile');
         inputUstensile.value = '';
         cadreListeTags.innerHTML = '';
         const tags = [...cadreTags.querySelectorAll(".tag-search")].map((btn) => btn.textContent.toLowerCase());
