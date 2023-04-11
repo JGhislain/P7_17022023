@@ -194,7 +194,7 @@ function ajouterElements(tag) {
     tagElement.classList.add('search-tag');
     // ---- Ajout du HTML dans l'élément div créé, avec le nom de l'ingrédient ---------------
     tagElement.textContent = tag;
-    // ---- Ajout de l'élément div créé à la section "cadreListeIngredients" -----------------
+    // ---- Ajout de l'élément span créé à la section "cadreListeTags" ------------------------
     cadreListeTags.appendChild(tagElement);
 }
 
@@ -205,7 +205,7 @@ function ajouterElements(tag) {
 
 
 function afficherTag(elements) {
-    // ---- Suppression du HTML précédent de la section "cadreListeIngredients" --------------
+    // ---- Suppression du HTML précédent de la section "cadreListeTags" -----------------------
     cadreListeTags.innerHTML = "";
     // ---- Pour chaque ingrédient dans le tableau "ingredients", on appelle la fonction "ajouterIngredients" pour l'ajouter à la section ----
     elements.forEach(element => {
@@ -470,7 +470,7 @@ function filterRecettesParTag(tags) {
 function afficherListeIngredients() {
     fermerLesListes();
     boutonAppareils.classList.add('fermer-cadre');
-    boutonUstensiles.classList.add('fermer-cadre');   
+    boutonUstensiles.classList.add('fermer-cadre');
     // Extraire tous les ingrédients de toutes les recettes
     const tousLesIngredients = recettesActuelles.flatMap((recette) => {
         return recette.ingredients.map((ingredient) => {
@@ -485,6 +485,10 @@ function afficherListeIngredients() {
     const ingredientsUniques = Array.from(new Set(tousLesIngredients));
     // Afficher les ingrédients dans la liste déroulante
     cadreTagsIngredients.innerHTML = ingredientsUniques.map((ingredient) => `<span class="search-tag">${ingredient}</span>`).join('');
+    if (boutonIngredients.classList.contains('largeur-bouton-filtre')) {
+        boutonIngredients.classList.remove('largeur-bouton-filtre');
+        boutonIngredients.classList.add('agrandir-bouton-filtre')
+    }
 }
 
 
@@ -500,6 +504,10 @@ function afficherListeAppareils() {
     const tousLesAppareils = recettesActuelles.map((recette) => recette.appliance.toLowerCase());
     const appareilsUniques = Array.from(new Set(tousLesAppareils));
     cadreTagsAppareils.innerHTML = appareilsUniques.map((appareil) => `<span class="search-tag">${appareil}</span>`).join('');
+    if (boutonAppareils.classList.contains('largeur-bouton-filtre')) {
+        boutonAppareils.classList.remove('largeur-bouton-filtre');
+        boutonAppareils.classList.add('agrandir-bouton-filtre')
+    }
 }
 
 
@@ -515,6 +523,10 @@ function afficherListeUstensiles() {
     const tousLesUstensiles = recettesActuelles.flatMap((recette) => recette.ustensils.map((ustensile) => ustensile.toLowerCase()));
     const ustensilesUniques = Array.from(new Set(tousLesUstensiles));
     cadreTagsUstensiles.innerHTML = ustensilesUniques.map((ustensile) => `<span class="search-tag">${ustensile}</span>`).join('');
+    if (boutonUstensiles.classList.contains('largeur-bouton-filtre')) {
+        boutonUstensiles.classList.remove('largeur-bouton-filtre');
+        boutonUstensiles.classList.add('agrandir-bouton-filtre')
+    }
 }
 
 
@@ -537,10 +549,22 @@ function fermerLesListes() {
 function videListe(event) {
     if (!inputIngredient.contains(event.target) && !cadreListeTags.contains(event.target)) {
         cadreTagsIngredients.innerHTML = "";
+        if (boutonIngredients.classList.contains('agrandir-bouton-filtre')) {
+            boutonIngredients.classList.remove('agrandir-bouton-filtre');
+            boutonIngredients.classList.add('largeur-bouton-filtre');
+        }
     } if (!inputAppareil.contains(event.target) && !cadreListeTags.contains(event.target)) {
         cadreTagsAppareils.innerHTML ="";
+        if (boutonAppareils.classList.contains('agrandir-bouton-filtre')) {
+            boutonAppareils.classList.remove('agrandir-bouton-filtre');
+            boutonAppareils.classList.add('largeur-bouton-filtre');
+        }
     } if (!inputUstensile.contains(event.target) && !cadreListeTags.contains(event.target)) {
         cadreTagsUstensiles.innerHTML = "";
+        if (boutonUstensiles.classList.contains('agrandir-bouton-filtre')) {
+            boutonUstensiles.classList.remove('agrandir-bouton-filtre');
+            boutonUstensiles.classList.add('largeur-bouton-filtre');
+        }
     }
 }
 

@@ -59,14 +59,17 @@ form {
 }
 .cadre-filtres {
     display: flex;
+    width: 100%;
 }
 .bouton-filtre {
     border-radius: 5px;
     margin: 0 20px 0 0;
+}
+.largeur-bouton-filtre {
     width: 13vw;
 }
 .agrandir-bouton-filtre {
-    width: 30%;
+    width: 30vw;
 }
 .cadre-tags {
     margin: 45px 0 35px 0;
