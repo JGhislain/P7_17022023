@@ -16,7 +16,6 @@ const cadreTags = document.querySelector('.cadre-tags');
 const cadreListeIngredients = document.querySelector('.liste-ingredient');
 const cadreListeAppareils = document.querySelector('.liste-appareil');
 const cadreListeUstensiles = document.querySelector('.liste-ustensile');
-const cadreListeTags = document.querySelector('.liste-tags');
 const cadreTagsIngredients = document.querySelector('.tags-ingredients');
 const cadreTagsAppareils = document.querySelector('.tags-appareils');
 const cadreTagsUstensiles = document.querySelector('.tags-ustensiles');
@@ -34,8 +33,10 @@ const boutonUstensiles = document.querySelector('.bouton-ustensiles');
 //                       Factory pour créer des objets de recette                       //
 //--------------------------------------------------------------------------------------//
 
-
+// ---- La classe RecetteFactory permet de créer des objets Recette ----------------------
 class RecetteFactory {
+
+    // ---- Méthode pour créer un objet Recette à partir d'un objet littéral -----------------
     creationRecette({ id, name, servings, ingredients, time, description, appliance, ustensils}) {
         return {
             id,
@@ -53,8 +54,8 @@ class RecetteFactory {
 // ---- Création d'une instance de RecetteFactory ----------------------------------------
 const recetteFactory = new RecetteFactory();
 
-
 // ---- Création d'un tableau des recettes à partir du tableau des recettes importé-------------
+// ---- Chaque recette est créée en utilisant l'instance de RecetteFactory ---------------
 const lesRecettes = recipes.map((recipe) => {
     const { id, name, servings, ingredients, time, description, appliance, ustensils} = recipe;
     return recetteFactory.creationRecette({ id, name, servings, ingredients, time, description, appliance, ustensils});
@@ -66,19 +67,31 @@ const lesRecettes = recipes.map((recipe) => {
 //--------------------------------------------------------------------------------------//
 
 
+// ---- Fonction pour créer une chaîne de caractères contenant le code HTML d'un élément recette ----
 function creationRecetteElement(recipe) {
-    // ---- Cibler les ingrédients et ses quantités ------------------------------------------
+
+    // ---- Générer la liste des ingrédients et leurs quantités ------------------------------
     const ingredientsListe = recipe.ingredients.map((ing) => {
+
+        // ---- Si la quantité et l'unité sont présentes -----------------------------------------
         if (ing.quantity && ing.unit) {
             return `<li class="liste-ingredients"><b>${ing.ingredient}:</b><span class="quantite-ingredients"> ${ing.quantity} ${ing.unit}</span></li>`
+
+        // ---- Si seule la quantité est présente ------------------------------------------------
         } else if (ing.quantity) {
             return `<li class="liste-ingredients"><b>${ing.ingredient}:</b><span class="quantite-ingredients"> ${ing.quantity}</span></li>`
+
+            // ---- Si seule l'unité est présente ----------------------------------------------------
         } else if (ing.unit) {
-          return `<li class="liste-ingredients"><b>${ing.ingredient}:</b><span class="quantite-ingredients"> ${ing.unit}</span></li>`
+            return `<li class="liste-ingredients"><b>${ing.ingredient}:</b><span class="quantite-ingredients"> ${ing.unit}</span></li>`
+
+            // ---- Si ni la quantité ni l'unité ne sont présentes -----------------------------------
         } else {
-          return `<li class="liste-ingredients"><b>${ing.ingredient}</b></li>`
+            return `<li class="liste-ingredients"><b>${ing.ingredient}</b></li>`
         }
     }).join('');
+
+    // ---- Retourne le code HTML d'un élément recette ---------------------------------------
     return `
     <article class="encart-recette" data-id="${recipe.id}">
         <div class="cadre-photo-recette"></div>
@@ -103,13 +116,19 @@ function creationRecetteElement(recipe) {
     `;
 }
 
+
 //--------------------------------------------------------------------------------------//
 //         Injecter les éléments HTML des recettes à la section cadre-recettes          //
 //--------------------------------------------------------------------------------------//
 
 
+// ---- Parcourir chaque recette dans le tableau des recettes ----------------------------
 lesRecettes.forEach((recipe) => {
+
+    // ---- Créer un élément HTML pour chaque recette ----------------------------------------
     const recetteElement = creationRecetteElement(recipe);
+
+    // ---- Ajouter l'élément HTML de la recette à la section des recettes -------------------
     sectionRecettes.innerHTML += recetteElement;
 });
 
@@ -124,48 +143,38 @@ let recettesActuelles = lesRecettes;
 
 
 function filtrerRecettes(texteRecherche, recettes = lesRecettes) {
-    // ---- On filtre les recettes dont le nom, la description ou les ingrédients contiennent le texte de recherche ----------------
+
+    // ---- Filtrer les recettes dont le nom, la description ou les ingrédients contiennent le texte de recherche ----
     const recettesFiltrees = recettes.filter((recette) => {
-        // ---- Convertir le nom et la description de la recette en minuscule; -------------------
+
+        // ---- Convertir le nom et la description de la recette en minuscule --------------------
         const nomRecette = recette.name.toLowerCase();
         const descriptionRecette = recette.description.toLowerCase();
+
         // ---- Convertir les éléments de la recette en minuscule et les combiner en une seule chaine de caractère ----
         const ingredientsRecette = recette.ingredients.map((ingredient) => {
             if (typeof ingredient === "object") {
-            // ---- Si l'ingrédient est un objet, extraire les valeurs des propriétés, les combiner en une chaîne de caractères et convertir en minuscules ----
-            return Object.values(ingredient).join(" ").toLowerCase();
+
+                // ---- Si l'ingrédient est un objet, extraire les valeurs des propriétés, les combiner en une chaîne de caractères et convertir en minuscules ----
+                return Object.values(ingredient).join(" ").toLowerCase();
             } else {
-            // ---- Si l'ingéredient est une seule chaîne de caractères, convertir simplement en minuscule ----
-            return ingredient.toLowerCase();
+
+                // ---- Si l'ingéredient est une seule chaîne de caractères, convertir simplement en minuscule ----
+                return ingredient.toLowerCase();
             }
         })
         .join(" ");
+
         // ---- Convertir le texte de recherche en minuscules ------------------------------------
         const texteRechercheLowerCase = texteRecherche.toLowerCase();
+
         // ---- Vérifier si le texte de recherche est présent dans le nom, la description ou les ingrédients de la recette ----
         return nomRecette.includes(texteRechercheLowerCase) || descriptionRecette.includes(texteRechercheLowerCase) || ingredientsRecette.includes(texteRechercheLowerCase);
     });
+
     // ---- Retourner les recettes filtrées ----------------
     return recettesFiltrees;
   }
-
-
-//--------------------------------------------------------------------------------------//
-//                  On écoute les changements sur l'input de recherche                  //
-//--------------------------------------------------------------------------------------//
-
-
-inputRecherche.addEventListener("input", (event) => {
-    const texteRecherche = event.target.value.trim();
-    // ---- On ne filtre les recettes que si l'utilisateur a tapé au moins 3 lettres ---------
-    if (texteRecherche.length >= 3) {
-        const recettesFiltrees = filtrerRecettes(texteRecherche, recettesActuelles);
-        afficherRecettes(recettesFiltrees);
-    } else {
-        // ---- Si le texte de recherche est trop court ou vide, on réaffiche toutes les recettes ----
-        afficherRecettes(recettesActuelles);
-    }
-});
 
 
 //--------------------------------------------------------------------------------------//
@@ -174,56 +183,90 @@ inputRecherche.addEventListener("input", (event) => {
 
 
 function afficherRecettes(recettes) {
-sectionRecettes.innerHTML = "";
-recettes.forEach((recipe) => {
-    const recetteElement = creationRecetteElement(recipe);
-    sectionRecettes.innerHTML += recetteElement;
-});
+
+    // ---- Vider le contenu de la section des recettes --------------------------------------
+    sectionRecettes.innerHTML = "";
+
+    // ---- Parcourir chaque recette et créer un élément HTML pour chaque recette ------------
+    recettes.forEach((recipe) => {
+        const recetteElement = creationRecetteElement(recipe);
+
+        // ---- Ajouter l'élément HTML de la recette à la section des recettes -------------------
+        sectionRecettes.innerHTML += recetteElement;
+    });
 }
 
 
 //--------------------------------------------------------------------------------------//
-//       Fonction pour ajouter les ingrédients à la section cadreListeTags              //
+//       Fonction pour ajouter les éléments (tags) à la section cadreListeTags          //
 //--------------------------------------------------------------------------------------//
 
 
-function ajouterElements(tag) {
-    // ---- Création d'un élément Div pour chaque ingrédient ---------------------------------
+function ajouterElements(tag, categorie) {
+
+    // ---- Création d'un élément span pour chaque tag (ingrédient, appareil, ustensile) -----
     const tagElement = document.createElement('span');
-    // ---- Ajout de la classe "liste-tags" pour l'élément div créé --------------------------
+
+    // ---- Ajout de la classe "search-tag" pour l'élément span créé -------------------------
     tagElement.classList.add('search-tag');
-    // ---- Ajout du HTML dans l'élément div créé, avec le nom de l'ingrédient ---------------
+
+    // ---- Ajout du contenu textuel (le nom du tag) dans l'élément span créé ----------------
     tagElement.textContent = tag;
-    // ---- Ajout de l'élément span créé à la section "cadreListeTags" ------------------------
-    cadreListeTags.appendChild(tagElement);
+
+    if (categorie === "ingredients") {
+        cadreTagsIngredients.appendChild(tagElement)
+    }
+    if (categorie === "appareils") {
+        cadreTagsAppareils.appendChild(tagElement)
+    }
+    if (categorie === "ustensiles") {
+        cadreTagsUstensiles.appendChild(tagElement)
+    }
+    
 }
 
 
 //--------------------------------------------------------------------------------------//
-//     Fonction pour afficher les tags dans la section cadreListeTags                   //
+//     Fonction pour afficher les tags (ingrédients, appareils, ustensiles) dans la     //
+//                                section cadreListeTags                                //
 //--------------------------------------------------------------------------------------//
 
 
-function afficherTag(elements) {
-    // ---- Suppression du HTML précédent de la section "cadreListeTags" -----------------------
-    cadreListeTags.innerHTML = "";
-    // ---- Pour chaque ingrédient dans le tableau "ingredients", on appelle la fonction "ajouterIngredients" pour l'ajouter à la section ----
+function afficherTag(elements, categorie) {
+
+    // ---- Suppression du contenu HTML précédent de la section "cadreListeTags" -------------
+    if (categorie === "ingredients") {
+        cadreTagsIngredients.innerHTML = "";
+    }
+    if (categorie === "appareils") {
+        cadreTagsAppareils.innerHTML = "";
+    }
+    if (categorie === "ustensiles") {
+        cadreTagsUstensiles.innerHTML = "";
+    }
+
+    // ---- Pour chaque élément dans le tableau "elements" (ingrédients, appareils, ustensiles), ----
+    // ---- on appelle la fonction "ajouterElements" pour l'ajouter à la section "cadreListeTags" ----
     elements.forEach(element => {
-        ajouterElements(element)
+        ajouterElements(element, categorie)
     })
 }
 
 
 //--------------------------------------------------------------------------------------//
-//   Fonction pour ajouter un tag à la section cadreTags et le retirer au clic          //
+//     Fonction pour ajouter un tag (ingrédient, appareil, ustensile) à la section      //
+//              cadreTags et le retirer au clic sur l'icône de suppression              //
 //--------------------------------------------------------------------------------------//
 
 
 function ajouterTag(tag, categorie) {
+
     // ---- Création d'un élément span pour chaque tag ---------------------------------------
     const tagElement = document.createElement('span');
+
     // ---- Ajout de la classe "tag-search" --------------------------------------------------
     tagElement.classList.add('tag-search');
+
     // ---- Ajout d'un background-color en fonction de la catégorie --------------------------
     if (categorie === "ingredient") {
         tagElement.style.backgroundColor = "#3282F7"
@@ -234,22 +277,29 @@ function ajouterTag(tag, categorie) {
     else if (categorie === "ustensile") {
         tagElement.style.backgroundColor = "#ED6454"
     }
-    // ---- Ajout du nom de l'ingrédient/ustensil/appareil dans l'élément --------------------
+
+    // ---- Ajout du nom de l'ingrédient, ustensile ou appareil dans l'élément ---------------
     tagElement.textContent = tag;
-    // ---- Création d'un élément i pour l'icone de suppression ------------------------------
+
+    // ---- Création d'un élément "i" pour l'icône de suppression ----------------------------
     const xIcone = document.createElement('i');
+
     // ---- Ajout des classes pour l'icone de suppression ------------------------------------
     xIcone.classList.add('fas', 'fa-times', 'icone-fermeture');
-    // ---- Ajout de l'icone de suppression --------------------------------------------------
+
+    // ---- Ajout de l'icône de suppression à l'élément span ---------------------------------
     tagElement.appendChild(xIcone);
+
     // ---- Ajout d'un événement au clic sur l'icone de suppression pour retirer l'élément ----
     xIcone.addEventListener('click', () => {
+
         // ---- Supprime l'élément span créé au clic sur l'icone ---------------------------------
         cadreTags.removeChild(tagElement);
         const tags = [...cadreTags.querySelectorAll('.tag-search')].map((tagRestant) => tagRestant.textContent);
         filterRecettesParTag(tags)
     });
-// ---- Ajout de l'élément span créé à la section "cadreTags" et on supprime la valeur dans la liste des éléments ----
+    
+    // ---- Ajout de l'élément span créé à la section "cadreTags" et on supprime la valeur dans la liste des éléments ----
     cadreTags.appendChild(tagElement);
     inputIngredient.value = "";
     inputAppareil.value = "";
@@ -266,19 +316,25 @@ function ajouterTag(tag, categorie) {
 let ingredientFiltres = new Set();
 
 function filtrerIngredients(texteRecherche) {
+
     // ---- Réinitialisation du Set pour stocker les ingrédients filtrés ---------------------
     ingredientFiltres.clear();
+
     // ---- Boucle pour chaque recette dans le tableau "lesRecettes" -------------------------
     lesRecettes.forEach((recette) => {
-    // ---- Création d'un tableau pour stocker les noms des ingrédients de la recette actuelle ----
+
+        // ---- Création d'un tableau pour stocker les noms des ingrédients de la recette actuelle ----
         const ingredientsRecette = recette.ingredients.map((ing) => ing.ingredient);
-    // ---- Filtrage du tableau d'ingrédients de la recette pour ne garder que ceux qui correspondent à la recherche ----
+
+        // ---- Filtrage du tableau d'ingrédients de la recette pour ne garder que ceux qui correspondent à la recherche ----
         const ingredientsFiltresRecette = ingredientsRecette.filter((ing) => 
         ing.toLowerCase().includes(texteRecherche.toLowerCase())
         );
-    // ---- Ajout des ingrédients filtrés de la recette actuelle dans le Set -----------------
+
+        // ---- Ajout des ingrédients filtrés de la recette actuelle dans le Set -----------------
         ingredientsFiltresRecette.forEach((ing) => ingredientFiltres.add(ing));
     });
+
     // ---- Conversion du Set en tableau pour le renvoyer ------------------------------------
     return [...ingredientFiltres]
 }
@@ -289,15 +345,24 @@ function filtrerIngredients(texteRecherche) {
 //--------------------------------------------------------------------------------------//
 
 
+// ---- Création d'un Set pour stocker les appareils filtrés -----------------------------
 let appareilFiltres = new Set();
 
 function filtrerAppareils(texteRecherche) {
+
+    // ---- Réinitialisation du Set pour stocker les appareils filtrés -----------------------
     appareilFiltres.clear();
+
+    // ---- Boucle pour chaque recette dans le tableau "lesRecettes" -------------------------
     lesRecettes.forEach((recette) => {
+
+        // ---- Si l'appareil de la recette actuelle correspond à la recherche, ajouter l'appareil au Set ----
         if (recette.appliance.toLowerCase().includes(texteRecherche.toLowerCase())) {
             appareilFiltres.add(recette.appliance);
         }
     });
+
+    // ---- Conversion du Set en tableau pour le renvoyer ------------------------------------
     return [...appareilFiltres];
 }
 
@@ -307,19 +372,304 @@ function filtrerAppareils(texteRecherche) {
 //--------------------------------------------------------------------------------------//
 
 
+// ---- Création d'un Set pour stocker les ustensiles filtrés ----------------------------
 let ustensileFiltres = new Set();
 
 function filtrerUstensiles(texteRecherche) {
+
+    // ---- Réinitialisation du Set pour stocker les ustensiles filtrés ----------------------
     ustensileFiltres.clear();
+
+    // ---- Boucle pour chaque recette dans le tableau "lesRecettes" -------------------------
     lesRecettes.forEach((recette) => {
+
+        // ---- Création d'un tableau pour stocker les ustensiles de la recette actuelle ---------
         const ustensilesRecette = recette.ustensils;
+
+        // ---- Filtrage du tableau d'ustensiles de la recette pour ne garder que ceux qui correspondent à la recherche ----
         const ustensilesFiltresRecette = ustensilesRecette.filter((ustensile) => 
             ustensile.toLowerCase().includes(texteRecherche.toLowerCase())
         );
+
+        // ---- Ajout des ustensiles filtrés de la recette actuelle dans le Set ------------------
         ustensilesFiltresRecette.forEach((ustensile) => ustensileFiltres.add(ustensile));
     });
+
+    // ---- Conversion du Set en tableau pour le renvoyer ------------------------------------
     return [...ustensileFiltres];
 }
+
+
+//--------------------------------------------------------------------------------------//
+//         Fonction pour filter les recettes en fonction des tags sélectionnés          //
+//--------------------------------------------------------------------------------------//
+
+
+function filterRecettesParTag(tags) {
+    // ---- Si il n'y a plus de tags, affichez toutes les recettes ---------------------------
+    if (tags.length === 0) {
+
+        // ---- Réinitialise le contenu de la section des recettes -------------------------------
+        sectionRecettes.innerHTML = "";
+
+        // ---- Génère et affiche les éléments de recette pour toutes les recettes ---------------
+        lesRecettes.forEach((recipe) => {
+            const recetteElement = creationRecetteElement(recipe);
+            sectionRecettes.innerHTML += recetteElement;
+            recettesActuelles = lesRecettes;
+        });
+
+    // ---- Sinon filtrer les recettes en fonction des tags sélectionnés ---------------------
+    } else {
+
+        // ---- Filtrer les recettes en fonction des tags ----------------------------------------
+        const recettesFiltrees = lesRecettes.filter((recette) => {
+        
+            // ---- Récupérer les ingrédients, les appareils et les ustensiles de la recette ---------
+            const ingredients = recette.ingredients.map((ing) => ing.ingredient.toLowerCase());
+            const appareils = [recette.appliance.toLowerCase()];
+            const ustensiles = recette.ustensils.map((ustensile) => ustensile.toLowerCase());
+
+            // ---- Vérifier si chaque tag est inclus dans les ingrédients, les appareils ou les ustensiles de la recette ----
+            return tags.every((tag) => [...ingredients, ...appareils, ...ustensiles].includes(tag.toLowerCase()));
+        });
+        // ---- Afficher les recettes filtrées ---------------------------------------------------
+        sectionRecettes.innerHTML = recettesFiltrees.map((recette) => creationRecetteElement(recette)).join("");
+
+        // ---- Mise à jour de la liste des recettes ---------------------------------------------
+        recettesActuelles = recettesFiltrees;
+    }
+}
+
+
+//--------------------------------------------------------------------------------------//
+//                   Fonction pour afficher la liste des ingrédients                    //
+//--------------------------------------------------------------------------------------//
+
+
+function afficherListeIngredients() {
+
+    // ---- Retirer la class "fermer-cadre" si boutonIngredients contient la class -----------
+    fermerLesListes();
+    
+    // ---- Ferme les autres listes déroulantes (appareils et ustensiles) avant d'afficher celle des ingrédients ----
+    boutonAppareils.classList.add('fermer-cadre');
+    boutonUstensiles.classList.add('fermer-cadre');
+
+    // ---- Extraire tous les ingrédients de toutes les recettes actuelles en utilisant flatMap pour créer un tableau unique ----
+    const tousLesIngredients = recettesActuelles.flatMap((recette) => {
+        return recette.ingredients.map((ing) => {
+
+            // ---- Si l'ingrédient est un objet, récupère la valeur de la propriété 'ingredient' ----
+            if (typeof ing === 'object') {
+                return ing.ingredient.toLowerCase();
+
+            // ---- sinon, utilise la valeur de l'ingrédient directement, en convertissant en minuscules ----
+            } else {
+                return ing.toLowerCase();
+            }
+        });
+    });
+
+    // Éliminer les doublons en créant un Set (qui ne permet pas les doublons) puis en le convertissant en tableau
+    const ingredientsUniques = Array.from(new Set(tousLesIngredients));
+
+    // ---- Afficher les ingrédients dans la liste déroulante en utilisant map pour créer un tableau de chaînes de caractères ----
+    // ---- représentant chaque élément de la liste, puis en le convertissant en une seule chaîne de caractères avec join('') ----
+    cadreTagsIngredients.innerHTML = ingredientsUniques.map((ingredient) => `<span class="search-tag">${ingredient}</span>`).join('');
+
+    // ---- Modifier la classe du bouton pour ajuster la largeur lors de l'affichage de la liste ----
+    if (boutonIngredients.classList.contains('largeur-bouton-filtre')) {
+
+        // ---- Enlevez la classe 'largeur-bouton-filtre' et ajoutez la classe 'agrandir-bouton-filtre' pour ajuster la largeur du bouton ----
+        boutonIngredients.classList.remove('largeur-bouton-filtre');
+        boutonIngredients.classList.add('agrandir-bouton-filtre')
+    }
+}
+
+
+//--------------------------------------------------------------------------------------//
+//                    Fonction pour afficher la liste des appareils                     //
+//--------------------------------------------------------------------------------------//
+
+
+function afficherListeAppareils() {
+
+    // ---- Retirer la class "fermer-cadre" si boutonAppareils contient la class -----------
+    fermerLesListes();
+
+    // ---- Ferme les autres listes déroulantes (ingrédients et ustensiles) avant d'afficher celle des appareils ----
+    boutonIngredients.classList.add('fermer-cadre');
+    boutonUstensiles.classList.add('fermer-cadre');
+
+    // ---- Extraire tous les appareils des recettes actuelles en utilisant map --------------
+    const tousLesAppareils = recettesActuelles.map((recette) => recette.appliance.toLowerCase());
+
+    // ---- Éliminer les doublons en créant un Set (qui ne permet pas les doublons) puis en le convertissant en tableau ----
+    const appareilsUniques = Array.from(new Set(tousLesAppareils));
+
+    // ---- Afficher les appareils dans la liste déroulante en utilisant map pour créer un tableau de chaînes de caractères ----
+    // ---- représentant chaque élément de la liste, puis en le convertissant en une seule chaîne de caractères avec join('') ----
+    cadreTagsAppareils.innerHTML = appareilsUniques.map((appareil) => `<span class="search-tag">${appareil}</span>`).join('');
+
+    // ---- Modifier la classe du bouton pour ajuster la largeur lors de l'affichage de la liste ----
+    if (boutonAppareils.classList.contains('largeur-bouton-filtre')) {
+
+        // ---- Enlevez la classe 'largeur-bouton-filtre' et ajoutez la classe 'agrandir-bouton-filtre' pour ajuster la largeur du bouton ----
+        boutonAppareils.classList.remove('largeur-bouton-filtre');
+        boutonAppareils.classList.add('agrandir-bouton-filtre')
+    }
+}
+
+
+//--------------------------------------------------------------------------------------//
+//                    Fonction pour afficher la liste des ustensiles                    //
+//--------------------------------------------------------------------------------------//
+
+
+function afficherListeUstensiles() {
+
+    // ---- Retirer la class "fermer-cadre" si boutonUstensiles contient la class ------------
+    fermerLesListes();
+
+    // ---- Ferme les autres listes déroulantes (ingrédients et appareils) avant d'afficher celle des ustensiles ----
+    boutonIngredients.classList.add('fermer-cadre');
+    boutonAppareils.classList.add('fermer-cadre');
+
+    // ---- Extraire tous les ustensiles des recettes actuelles en utilisant flatMap ---------
+    const tousLesUstensiles = recettesActuelles.flatMap((recette) => recette.ustensils.map((ustensile) => ustensile.toLowerCase()));
+
+    // ---- Éliminer les doublons en créant un Set (qui ne permet pas les doublons) puis en le convertissant en tableau ----
+    const ustensilesUniques = Array.from(new Set(tousLesUstensiles));
+
+    // ---- Afficher les ustensiles dans la liste déroulante en utilisant map pour créer un tableau de chaînes de caractères ----
+    // ---- représentant chaque élément de la liste, puis en le convertissant en une seule chaîne de caractères avec join('') ----
+    cadreTagsUstensiles.innerHTML = ustensilesUniques.map((ustensile) => `<span class="search-tag">${ustensile}</span>`).join('');
+
+    // ---- Modifier la classe du bouton pour ajuster la largeur lors de l'affichage de la liste ----
+    if (boutonUstensiles.classList.contains('largeur-bouton-filtre')) {
+    
+        // ---- Enlevez la classe 'largeur-bouton-filtre' et ajoutez la classe 'agrandir-bouton-filtre' pour ajuster la largeur du bouton ----
+        boutonUstensiles.classList.remove('largeur-bouton-filtre');
+        boutonUstensiles.classList.add('agrandir-bouton-filtre')
+    }
+}
+
+
+//--------------------------------------------------------------------------------------//
+//          Fonction pour ne pas afficher les listes des tags non sélectionnés          //
+//--------------------------------------------------------------------------------------//
+
+
+function fermerLesListes() {
+    // ---- Vérifie si le bouton des ingrédients contient la classe "fermer-cadre" -----------
+    if (boutonIngredients.classList.contains("fermer-cadre")) {
+
+        // ---- Retire la classe pour fermer la liste déroulante des ingrédients -----------------
+        boutonIngredients.classList.remove("fermer-cadre");
+    }
+
+    // ---- Vérifie si le bouton des appareils contient la classe "fermer-cadre" -------------
+    if (boutonAppareils.classList.contains("fermer-cadre")) {
+
+        // ---- Retire la classe pour fermer la liste déroulante des appareils -------------------
+        boutonAppareils.classList.remove("fermer-cadre");
+    }
+
+    // ---- Vérifie si le bouton des ustensiles contient la classe "fermer-cadre" ------------
+    if (boutonUstensiles.classList.contains("fermer-cadre")) {
+
+    // ---- Retire la classe pour fermer la liste déroulante des ustensiles ------------------
+        boutonUstensiles.classList.remove("fermer-cadre");
+    }
+}
+
+//--------------------------------------------------------------------------------------//
+//                        fonction pour vider la liste des tags                         //
+//--------------------------------------------------------------------------------------//
+
+
+function videListe(event) {
+
+    // ---- Vérifie si le clic ne se fait pas sur les éléments inputIngredient et cadreListeTags ----
+    if (!inputIngredient.contains(event.target) && !cadreTagsIngredients.contains(event.target)) {
+
+        // ---- Vide le contenu de cadreTagsIngredients ------------------------------------------
+        cadreTagsIngredients.innerHTML = "";
+
+        // ---- Vide le contenu de l'input Ingredients -------------------------------------------
+        inputIngredient.value = "";
+
+        // ---- Vérifie si boutonIngredients contient la classe "agrandir-bouton-filtre" ---------
+        if (boutonIngredients.classList.contains('agrandir-bouton-filtre')) {
+
+            // ---- Modifie la classe du boutonIngredients -------------------------------------------
+            boutonIngredients.classList.remove('agrandir-bouton-filtre');
+            boutonIngredients.classList.add('largeur-bouton-filtre');
+        }
+
+    // ---- Vérifie si le clic ne se fait pas sur les éléments inputAppareil et cadreListeTags ----
+    } if (!inputAppareil.contains(event.target) && !cadreTagsAppareils.contains(event.target)) {
+
+        // ---- Vide le contenu de cadreTagsAppareils --------------------------------------------
+        cadreTagsAppareils.innerHTML ="";
+
+        // ---- Vide le contenu de l'input Appareils -------------------------------------------
+        inputAppareil.value = "";
+        
+        // ---- Vérifie si boutonAppareils contient la classe "agrandir-bouton-filtre" -----------
+        if (boutonAppareils.classList.contains('agrandir-bouton-filtre')) {
+
+            // ---- Modifie la classe du boutonAppareils ---------------------------------------------
+            boutonAppareils.classList.remove('agrandir-bouton-filtre');
+            boutonAppareils.classList.add('largeur-bouton-filtre');
+        }
+
+    // ---- Vérifie si le clic ne se fait pas sur les éléments inputUstensile et cadreListeTags ----
+    } if (!inputUstensile.contains(event.target) && !cadreTagsUstensiles.contains(event.target)) {
+
+        // ---- Vide le contenu de cadreTagsUstensiles -------------------------------------------
+        cadreTagsUstensiles.innerHTML = "";
+
+        // ---- Vide le contenu de l'input Ustensiles -------------------------------------------
+        inputUstensile.value = "";
+
+        // ---- Vérifie si boutonAppareils contient la classe "agrandir-bouton-filtre" -----------
+        if (boutonUstensiles.classList.contains('agrandir-bouton-filtre')) {
+
+            // ---- Modifie la classe du boutonUstensiles --------------------------------------------
+            boutonUstensiles.classList.remove('agrandir-bouton-filtre');
+            boutonUstensiles.classList.add('largeur-bouton-filtre');
+        }
+    }
+}
+
+
+//--------------------------------------------------------------------------------------//
+//                  On écoute les changements sur l'input de recherche                  //
+//--------------------------------------------------------------------------------------//
+
+
+inputRecherche.addEventListener("input", (event) => {
+
+    // ---- Récupère la valeur de l'input et supprime les espaces en début et fin de chaîne ----
+    const texteRecherche = event.target.value.trim();
+
+
+    // ---- On ne filtre les recettes que si l'utilisateur a tapé au moins 3 lettres ---------
+    if (texteRecherche.length >= 3) {
+
+        // ---- Filtrer les recettes en utilisant la fonction filtrerRecettes --------------------
+        const recettesFiltrees = filtrerRecettes(texteRecherche, recettesActuelles);
+
+        // ---- Afficher les recettes filtrées ---------------------------------------------------
+        afficherRecettes(recettesFiltrees);       
+    } else {
+
+        // ---- Si le texte de recherche est trop court ou vide, on réaffiche toutes les recettes ----
+        afficherRecettes(recettesActuelles);
+    }
+});
 
 
 //--------------------------------------------------------------------------------------//
@@ -334,13 +684,14 @@ inputIngredient.addEventListener('input', () => {
     const texteRecherche = inputIngredient.value.trim();
     // ---- Si la longueur du texte de recherche est inférieure à 3, on vide la liste d'ingrédients filtrés ----
     if (texteRecherche.length < 3) {
-        cadreListeTags.innerHTML = '';
+        cadreTagsIngredients.innerHTML = '';
+        afficherListeIngredients();
         return;
     }
     // ---- Filtrage des ingrédients en fonction du texte de recherche -----------------------
     const ingredientsFiltres = filtrerIngredients(texteRecherche);
     // ---- Affichage des ingrédients filtrés ------------------------------------------------
-    afficherTag(ingredientsFiltres);
+    afficherTag(ingredientsFiltres, "ingredients");
 });
 
 
@@ -353,11 +704,12 @@ inputIngredient.addEventListener('input', () => {
 inputAppareil.addEventListener('input', () => {
     const texteRecherche = inputAppareil.value.trim();
     if (texteRecherche.length < 3) {
-        cadreListeTags.innerHTML = '';
+        cadreTagsAppareils.innerHTML = '';
+        afficherListeAppareils();
         return;
     }
     const appareilsFiltres = filtrerAppareils(texteRecherche);
-    afficherTag(appareilsFiltres);
+    afficherTag(appareilsFiltres, "appareils");
 });
 
 
@@ -370,11 +722,12 @@ inputAppareil.addEventListener('input', () => {
 inputUstensile.addEventListener('input', () => {
     const texteRecherche = inputUstensile.value.trim();
     if (texteRecherche.length < 3) {
-        cadreListeTags.innerHTML = '';
+        cadreTagsUstensiles.innerHTML = '';
+        afficherListeUstensiles();
         return;
     }
     const ustensilesFiltres = filtrerUstensiles(texteRecherche);
-    afficherTag(ustensilesFiltres);
+    afficherTag(ustensilesFiltres, "ustensiles");
 });
 
 
@@ -391,7 +744,7 @@ cadreListeIngredients.addEventListener('click', (event) => {
         ajouterTag(event.target.textContent, 'ingredient');
         // ---- On vide la zone de recherche des ingrédients -------------------------------------
         inputIngredient.value = '';
-        cadreListeTags.innerHTML = '';
+        cadreTagsIngredients.innerHTML = '';
         // ---- Récupérer les tags sélectionnés en les transformant en tableau -------------------
         const tags = [...cadreTags.querySelectorAll(".tag-search")].map((btn) => btn.textContent.toLowerCase());
         // ---- Appeler la fonction pour filtrer les recettes avec les tags sélectionnés ---------
@@ -409,7 +762,7 @@ cadreListeAppareils.addEventListener('click', (event) => {
     if (event.target.classList.contains('search-tag')) {
         ajouterTag(event.target.textContent, 'appareil');
         inputAppareil.value = '';
-        cadreListeTags.innerHTML = '';
+        cadreTagsAppareils.innerHTML = '';
         const tags = [...cadreTags.querySelectorAll(".tag-search")].map((btn) => btn.textContent.toLowerCase());
         filterRecettesParTag(tags);
     }
@@ -417,7 +770,7 @@ cadreListeAppareils.addEventListener('click', (event) => {
 
 
 //--------------------------------------------------------------------------------------//
-//  Événement pour ajouter un tag à la section cadre-tags lors du clic sur un appareil  //
+//  Événement pour ajouter un tag à la section cadre-tags lors du clic sur un ustensile //
 //--------------------------------------------------------------------------------------//
 
 
@@ -425,148 +778,11 @@ cadreListeUstensiles.addEventListener('click', (event) => {
     if (event.target.classList.contains('search-tag')) {
         ajouterTag(event.target.textContent, 'ustensile');
         inputUstensile.value = '';
-        cadreListeTags.innerHTML = '';
+        cadreTagsIngredients.innerHTML = '';
         const tags = [...cadreTags.querySelectorAll(".tag-search")].map((btn) => btn.textContent.toLowerCase());
         filterRecettesParTag(tags);
     }
 });
-
-
-//--------------------------------------------------------------------------------------//
-//                      Fonction pour filter les recettes par tags                      //
-//--------------------------------------------------------------------------------------//
-
-
-function filterRecettesParTag(tags) {
-    // ---- Si il n'y a plus de tags, affichez toutes les recettes ---------------------------
-    if (tags.length === 0) {
-        sectionRecettes.innerHTML = "";
-        lesRecettes.forEach((recipe) => {
-            const recetteElement = creationRecetteElement(recipe);
-            sectionRecettes.innerHTML += recetteElement;
-            recettesActuelles = lesRecettes;
-        });
-    // ---- Sinon filtrer les recettes en fonction des tags sélectionnés ---------------------
-    } else {
-        const recettesFiltrees = lesRecettes.filter((recette) => {
-            // ---- Vérifie si chaque tag est inclus dans les ingrédients, les appareils ou les ustensiles de la recette ----
-            const ingredients = recette.ingredients.map((ing) => ing.ingredient.toLowerCase());
-            const appareils = [recette.appliance.toLowerCase()];
-            const ustensiles = recette.ustensils.map((ustensile) => ustensile.toLowerCase());
-            return tags.every((tag) => [...ingredients, ...appareils, ...ustensiles].includes(tag.toLowerCase()));
-        });
-        // ---- Afficher les recettes filtrées ---------------------------------------------------
-        sectionRecettes.innerHTML = recettesFiltrees.map((recette) => creationRecetteElement(recette)).join("");
-        recettesActuelles = recettesFiltrees;
-    }
-}
-
-
-//--------------------------------------------------------------------------------------//
-//                   Fonction pour afficher la liste des ingrédients                    //
-//--------------------------------------------------------------------------------------//
-
-
-function afficherListeIngredients() {
-    fermerLesListes();
-    boutonAppareils.classList.add('fermer-cadre');
-    boutonUstensiles.classList.add('fermer-cadre');
-    // Extraire tous les ingrédients de toutes les recettes
-    const tousLesIngredients = recettesActuelles.flatMap((recette) => {
-        return recette.ingredients.map((ingredient) => {
-            if (typeof ingredient === 'object') {
-                return ingredient.ingredient.toLowerCase();
-            } else {
-                return ingredient.toLowerCase();
-            }
-        });
-    });
-    // Éliminer les doublons en créant un Set (qui ne permet pas les doublons) puis en le convertissant en tableau
-    const ingredientsUniques = Array.from(new Set(tousLesIngredients));
-    // Afficher les ingrédients dans la liste déroulante
-    cadreTagsIngredients.innerHTML = ingredientsUniques.map((ingredient) => `<span class="search-tag">${ingredient}</span>`).join('');
-    if (boutonIngredients.classList.contains('largeur-bouton-filtre')) {
-        boutonIngredients.classList.remove('largeur-bouton-filtre');
-        boutonIngredients.classList.add('agrandir-bouton-filtre')
-    }
-}
-
-
-//--------------------------------------------------------------------------------------//
-//                    Fonction pour afficher la liste des appareils                     //
-//--------------------------------------------------------------------------------------//
-
-
-function afficherListeAppareils() {
-    fermerLesListes();
-    boutonIngredients.classList.add('fermer-cadre');
-    boutonUstensiles.classList.add('fermer-cadre');
-    const tousLesAppareils = recettesActuelles.map((recette) => recette.appliance.toLowerCase());
-    const appareilsUniques = Array.from(new Set(tousLesAppareils));
-    cadreTagsAppareils.innerHTML = appareilsUniques.map((appareil) => `<span class="search-tag">${appareil}</span>`).join('');
-    if (boutonAppareils.classList.contains('largeur-bouton-filtre')) {
-        boutonAppareils.classList.remove('largeur-bouton-filtre');
-        boutonAppareils.classList.add('agrandir-bouton-filtre')
-    }
-}
-
-
-//--------------------------------------------------------------------------------------//
-//                    Fonction pour afficher la liste des ustensiles                    //
-//--------------------------------------------------------------------------------------//
-
-
-function afficherListeUstensiles() {
-    fermerLesListes();
-    boutonIngredients.classList.add('fermer-cadre');
-    boutonAppareils.classList.add('fermer-cadre');
-    const tousLesUstensiles = recettesActuelles.flatMap((recette) => recette.ustensils.map((ustensile) => ustensile.toLowerCase()));
-    const ustensilesUniques = Array.from(new Set(tousLesUstensiles));
-    cadreTagsUstensiles.innerHTML = ustensilesUniques.map((ustensile) => `<span class="search-tag">${ustensile}</span>`).join('');
-    if (boutonUstensiles.classList.contains('largeur-bouton-filtre')) {
-        boutonUstensiles.classList.remove('largeur-bouton-filtre');
-        boutonUstensiles.classList.add('agrandir-bouton-filtre')
-    }
-}
-
-
-//--------------------------------------------------------------------------------------//
-//          Fonction pour ne pas afficher les listes des tags non sélectionnés          //
-//--------------------------------------------------------------------------------------//
-
-
-function fermerLesListes() {
-    boutonIngredients.classList.remove("fermer-cadre");
-    boutonAppareils.classList.remove("fermer-cadre");
-    boutonUstensiles.classList.remove("fermer-cadre");
-}
-
-//--------------------------------------------------------------------------------------//
-//                        fonction pour vider la liste des tags                         //
-//--------------------------------------------------------------------------------------//
-
-
-function videListe(event) {
-    if (!inputIngredient.contains(event.target) && !cadreListeTags.contains(event.target)) {
-        cadreTagsIngredients.innerHTML = "";
-        if (boutonIngredients.classList.contains('agrandir-bouton-filtre')) {
-            boutonIngredients.classList.remove('agrandir-bouton-filtre');
-            boutonIngredients.classList.add('largeur-bouton-filtre');
-        }
-    } if (!inputAppareil.contains(event.target) && !cadreListeTags.contains(event.target)) {
-        cadreTagsAppareils.innerHTML ="";
-        if (boutonAppareils.classList.contains('agrandir-bouton-filtre')) {
-            boutonAppareils.classList.remove('agrandir-bouton-filtre');
-            boutonAppareils.classList.add('largeur-bouton-filtre');
-        }
-    } if (!inputUstensile.contains(event.target) && !cadreListeTags.contains(event.target)) {
-        cadreTagsUstensiles.innerHTML = "";
-        if (boutonUstensiles.classList.contains('agrandir-bouton-filtre')) {
-            boutonUstensiles.classList.remove('agrandir-bouton-filtre');
-            boutonUstensiles.classList.add('largeur-bouton-filtre');
-        }
-    }
-}
 
 
 //--------------------------------------------------------------------------------------//
