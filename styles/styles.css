@@ -65,10 +65,10 @@ form {
     margin: 0 20px 0 0;
 }
 .largeur-bouton-filtre {
-    width: 13vw;
+    width: 170px;
 }
 .agrandir-bouton-filtre {
-    width: 30vw;
+    width: 55%;
 }
 .cadre-tags {
     margin: 45px 0 35px 0;
@@ -80,14 +80,16 @@ form {
     color: var(--couleur-bg);
     padding: 15px;
 }
+.icone-liste {
+    padding-right: 10px;
+}
 .input-tag {
     background-color: transparent;
     font-size: 1.2em;
-    padding: 5px 10px;
     border: none;
     color: var(--couleur-bg);
     cursor: pointer;
-    width: 10vw;
+    width: 125px;
 }
 .input-tag::placeholder {
     color: var(--couleur-bg);
@@ -98,6 +100,9 @@ form {
 }
 .input-tag:focus .bouton-filtre {
     width: auto;
+}
+.input-tag:focus + .icone-liste {
+    rotate: 180deg;
 }
 .icone-fermeture {
     padding: 0 5px;
@@ -110,10 +115,10 @@ form {
     display: flex;
     align-items: center;
     height: 70px;
-    justify-content: space-around;
+    justify-content: space-between;
     border-radius: 5px;
     color: var(--couleur-bg);
-    margin: auto 10px auto 0;
+    margin: auto 15px;
 }
 .bouton-ingredients {
     background-color: var(--couleur-ingredient);
@@ -124,20 +129,38 @@ form {
 .bouton-ustensiles {
     background-color: var(--couleur-ustensile);
 }
-.liste-tags {
+.tags-appareils {
     display: flex;
     flex-wrap: wrap;
+    flex-direction: column;
+    max-height: 50vh;
+    margin: 15px 0;
+}
+.tags-ustensiles {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    max-height: 50vh;
+    margin: 15px 0;
+}
+.tags-ingredients {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    max-height: 225vh;
+    margin: 15px 0;
 }
 .fermer-cadre {
-    height: 74px;
+    height: 69px;
 }
 .search-tag {
     background-color: transparent;
     font-size: 1.2em;
-    padding: 5px 10px;
+    padding: 10px 30px;
     border: none;
     color: var(--couleur-bg);
     cursor: pointer;
+    max-width: 200px;
 }
 .search-tag:hover {
     transform: scale(1.2);
