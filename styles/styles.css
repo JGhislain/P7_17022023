@@ -72,7 +72,7 @@ form {
     border-radius: 5px;
     cursor: pointer;
     border: none;
-    background-color: var(--couleur-bg);
+    background-color: var(--couleur-bg-gris);
     font-size: 2em;
 }
 .cadre-filtres {
