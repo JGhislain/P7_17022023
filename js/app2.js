@@ -773,19 +773,27 @@ inputUstensile.addEventListener('input', () => {
 
 
 cadreListeIngredients.addEventListener('click', (event) => {
+    
     // ---- Si la section "cadre-tags" contient un élément ayant la classe "search-tag" ------
     if(event.target.classList.contains('search-tag')) {
+        
         // ---- Appel de la fonction pour ajouter le tag à la section des tags -------------------
         ajouterTag(event.target.textContent, 'ingredient');
+        
         // ---- On vide la zone de recherche des ingrédients -------------------------------------
         inputIngredient.value = '';
-        cadreTagsIngredients.innerHTML = '';
+        
         // ---- Récupérer les tags sélectionnés en les transformant en tableau -------------------
-        const tags = [...cadreTags.querySelectorAll(".tag-search")].map((btn) => btn.textContent.toLowerCase());
+        const tagsElements = cadreTags.querySelectorAll(".tag-search");
+        const tags = [];
+        for (let i = 0; i < tagsElements.length; i++) {
+            tags.push(tagsElements[i].textContent.toLowerCase());
+        }
+
         // ---- Appeler la fonction pour filtrer les recettes avec les tags sélectionnés ---------
         filterRecettesParTag(tags);
     }
-})
+});
 
 
 //--------------------------------------------------------------------------------------//
@@ -797,8 +805,15 @@ cadreListeAppareils.addEventListener('click', (event) => {
     if (event.target.classList.contains('search-tag')) {
         ajouterTag(event.target.textContent, 'appareil');
         inputAppareil.value = '';
-        cadreTagsAppareils.innerHTML = '';
-        const tags = [...cadreTags.querySelectorAll(".tag-search")].map((btn) => btn.textContent.toLowerCase());
+        
+        // ---- Récupérer les tags sélectionnés en les transformant en tableau -------------------
+        const tagsElements = cadreTags.querySelectorAll(".tag-search");
+        const tags = [];
+        for (let i = 0; i < tagsElements.length; i++) {
+            tags.push(tagsElements[i].textContent.toLowerCase());
+        }
+
+        // ---- Appeler la fonction pour filtrer les recettes avec les tags sélectionnés ---------
         filterRecettesParTag(tags);
     }
 });
@@ -813,8 +828,15 @@ cadreListeUstensiles.addEventListener('click', (event) => {
     if (event.target.classList.contains('search-tag')) {
         ajouterTag(event.target.textContent, 'ustensile');
         inputUstensile.value = '';
-        cadreTagsUstensiles.innerHTML = '';
-        const tags = [...cadreTags.querySelectorAll(".tag-search")].map((btn) => btn.textContent.toLowerCase());
+
+        // ---- Récupérer les tags sélectionnés en les transformant en tableau -------------------
+        const tagsElements = cadreTags.querySelectorAll(".tag-search");
+        const tags = [];
+        for (let i = 0; i < tagsElements.length; i++) {
+            tags.push(tagsElements[i].textContent.toLowerCase());
+        }
+        
+        // ---- Appeler la fonction pour filtrer les recettes avec les tags sélectionnés ---------
         filterRecettesParTag(tags);
     }
 });

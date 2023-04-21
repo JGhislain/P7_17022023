@@ -2,6 +2,24 @@
 @import url("https://fonts.googleapis.com/css?family=DM+Sans");
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 
+@keyframes opaque {
+    0% {
+        opacity: 0.3;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes rotation {
+    0% {
+        rotate: 0;
+    }
+    100% {
+        rotate: 180deg;
+    }
+}
+
 :root {
     --couleur-ingredient: #3282F7;
     --couleur-appareil: #68D9A4;
@@ -69,6 +87,7 @@ form {
 }
 .agrandir-bouton-filtre {
     width: 55%;
+    animation: opaque 450ms ease-out;
 }
 .cadre-tags {
     margin: 45px 0 35px 0;
@@ -102,7 +121,7 @@ form {
     width: auto;
 }
 .input-tag:focus + .icone-liste {
-    rotate: 180deg;
+    animation: rotation 400ms both;
 }
 .icone-fermeture {
     padding: 0 5px;
@@ -243,11 +262,13 @@ article.encart-recette:hover {
     height: auto;
 }
 article.encart-recette:hover div.cadre-ingredients {
+    animation: opaque 450ms linear;
     display: block;
     overflow: auto;
     -webkit-line-clamp: initial;
 }
 article.encart-recette:hover div.description-recette {
+    animation: opaque 450ms linear;
     display: block;
     height: max-content;
     overflow: auto;

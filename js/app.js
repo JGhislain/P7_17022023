@@ -681,18 +681,21 @@ inputRecherche.addEventListener("input", (event) => {
 //--------------------------------------------------------------------------------------//
 
 
-// ---- Sélection de l'élément input search-ingredient -----------------------------------
 inputIngredient.addEventListener('input', () => {
+    
     // ---- Récupération du texte de recherche dans l'input ----------------------------------
     const texteRecherche = inputIngredient.value.trim();
+    
     // ---- Si la longueur du texte de recherche est inférieure à 3, on vide la liste d'ingrédients filtrés ----
     if (texteRecherche.length < 3) {
         cadreTagsIngredients.innerHTML = '';
         afficherListeIngredients();
         return;
     }
+    
     // ---- Filtrage des ingrédients en fonction du texte de recherche -----------------------
     const ingredientsFiltres = filtrerIngredients(texteRecherche);
+    
     // ---- Affichage des ingrédients filtrés ------------------------------------------------
     afficherTag(ingredientsFiltres, "ingredients");
 });
@@ -705,13 +708,21 @@ inputIngredient.addEventListener('input', () => {
 
 
 inputAppareil.addEventListener('input', () => {
+
+    // ---- Récupération du texte de recherche dans l'input --------------------------------
     const texteRecherche = inputAppareil.value.trim();
+
+    // ---- Si la longueur du texte de recherche est inférieure à 3, on vide la liste des appareils filtrés ----
     if (texteRecherche.length < 3) {
         cadreTagsAppareils.innerHTML = '';
         afficherListeAppareils();
         return;
     }
+
+    // ---- Filtrage des appareils en fonction du texte de recherche -----------------------
     const appareilsFiltres = filtrerAppareils(texteRecherche);
+
+    // ---- Affichage des appareils filtrés ------------------------------------------------
     afficherTag(appareilsFiltres, "appareils");
 });
 
@@ -723,13 +734,21 @@ inputAppareil.addEventListener('input', () => {
 
 
 inputUstensile.addEventListener('input', () => {
+
+    // ---- Récupération du texte de recherche dans l'input ----------------------------------
     const texteRecherche = inputUstensile.value.trim();
+
+    // ---- Si la longueur du texte de recherche est inférieure à 3, on vide la liste des ustensiles filtrés ----
     if (texteRecherche.length < 3) {
         cadreTagsUstensiles.innerHTML = '';
         afficherListeUstensiles();
         return;
     }
+
+    // ---- Filtrage des ustensiles en fonction du texte de recherche -----------------------
     const ustensilesFiltres = filtrerUstensiles(texteRecherche);
+
+    // ---- Affichage des ustensiles filtrés ------------------------------------------------
     afficherTag(ustensilesFiltres, "ustensiles");
 });
 
@@ -741,15 +760,19 @@ inputUstensile.addEventListener('input', () => {
 
 
 cadreListeIngredients.addEventListener('click', (event) => {
+    
     // ---- Si la section "cadre-tags" contient un élément ayant la classe "search-tag" ------
     if(event.target.classList.contains('search-tag')) {
+    
         // ---- Appel de la fonction pour ajouter le tag à la section des tags -------------------
         ajouterTag(event.target.textContent, 'ingredient');
+    
         // ---- On vide la zone de recherche des ingrédients -------------------------------------
         inputIngredient.value = '';
-        cadreTagsIngredients.innerHTML = '';
+    
         // ---- Récupérer les tags sélectionnés en les transformant en tableau -------------------
         const tags = [...cadreTags.querySelectorAll(".tag-search")].map((btn) => btn.textContent.toLowerCase());
+    
         // ---- Appeler la fonction pour filtrer les recettes avec les tags sélectionnés ---------
         filterRecettesParTag(tags);
     }
@@ -762,11 +785,20 @@ cadreListeIngredients.addEventListener('click', (event) => {
 
 
 cadreListeAppareils.addEventListener('click', (event) => {
+
+    // ---- Si la section "cadre-tags" contient un élément ayant la classe "search-tag" ------
     if (event.target.classList.contains('search-tag')) {
+
+        // ---- Appel de la fonction pour ajouter le tag à la section des tags -------------------
         ajouterTag(event.target.textContent, 'appareil');
+
+        // ---- On vide la zone de recherche des ingrédients -------------------------------------
         inputAppareil.value = '';
-        cadreTagsAppareils.innerHTML = '';
+
+        // ---- Récupérer les tags sélectionnés en les transformant en tableau -------------------
         const tags = [...cadreTags.querySelectorAll(".tag-search")].map((btn) => btn.textContent.toLowerCase());
+
+        // ---- Appeler la fonction pour filtrer les recettes avec les tags sélectionnés ---------
         filterRecettesParTag(tags);
     }
 });
@@ -778,18 +810,27 @@ cadreListeAppareils.addEventListener('click', (event) => {
 
 
 cadreListeUstensiles.addEventListener('click', (event) => {
+
+    // ---- Si la section "cadre-tags" contient un élément ayant la classe "search-tag" ------
     if (event.target.classList.contains('search-tag')) {
+
+        // ---- Appel de la fonction pour ajouter le tag à la section des tags -------------------
         ajouterTag(event.target.textContent, 'ustensile');
+
+        // ---- On vide la zone de recherche des ingrédients -------------------------------------
         inputUstensile.value = '';
-        cadreTagsUstensiles.innerHTML = '';
+
+        // ---- Récupérer les tags sélectionnés en les transformant en tableau -------------------
         const tags = [...cadreTags.querySelectorAll(".tag-search")].map((btn) => btn.textContent.toLowerCase());
+
+        // ---- Appeler la fonction pour filtrer les recettes avec les tags sélectionnés ---------
         filterRecettesParTag(tags);
     }
 });
 
 
 //--------------------------------------------------------------------------------------//
-//           Écouteurs d'évéenements pour afficher les tags ou vider la liste           //
+//           Écouteurs d'événements pour afficher les tags ou vider la liste            //
 //--------------------------------------------------------------------------------------//
 
 
