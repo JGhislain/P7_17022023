@@ -197,6 +197,22 @@ function afficherRecettes(recettes) {
     // ---- Vider le contenu de la section des recettes --------------------------------------
     sectionRecettes.innerHTML = "";
 
+        // ---- Si aucune recette à afficher, un message d'erreur est créer et indiquer à l'utilisateur ----
+        if (recettes.length === 0) {
+            
+            // ---- Création d'un élément HTML -------------------------------------------------------
+            const manqueRecette = document.createElement('div');
+
+            // ---- Ajouter une classe à l'élément span ----------------------------------------------
+            manqueRecette.classList.add('manque-recette');
+
+            // ---- Ajouter un message d'erreur à l'élément ------------------------------------------
+            manqueRecette.innerHTML = `<img class="icone-toque-erreur" src="../assets/img/toque_titre.png" alt="image d'une toque de chef">
+            <span class="message-erreur">Aucune recette ne correspond à votre recherche.</span>`;
+
+            // ---- Ajouter l'élément span à la section des recettes ---------------------------------
+            sectionRecettes.appendChild(manqueRecette);
+        }
     // ---- Parcourir chaque recette et créer un élément HTML pour chaque recette ------------
     for (let i = 0; i < recettes.length; i++) {
         const recipe = recettes[i];
