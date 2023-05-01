@@ -65,7 +65,7 @@
     font-style: normal;
 }
 html {
-    margin: 1% 5%;
+    margin: 1% 10%;
 }
 header {
     display: flex;
@@ -101,7 +101,7 @@ form {
 }
 .bouton-recherche {
     position: absolute;
-    right: 5.4vw;
+    right: 10.4vw;
     height: 70px;
     width: 70px;
     border-radius: 5px;
