@@ -438,46 +438,50 @@ function filtrerUstensiles(texteRecherche) {
 
 
 function filterRecettesParTag(tags, texteRecherche = "") {
-    // ---- Si il n'y a plus de tags, affichez toutes les recettes ---------------------------
-    if (tags.length === 0) {
+    // Choisissez les recettes à filtrer en fonction du texte de la recherche
+    let recettesAFiltrer;
+    if (texteRecherche.length >= 3) {
+        recettesAFiltrer = recettesActuelles;
+    } else {
+        recettesAFiltrer = lesRecettes;
+    }
 
-        // ---- Réinitialise le contenu de la section des recettes -------------------------------
+    // Si il n'y a plus de tags, affichez toutes les recettes
+    if (tags.length === 0) {
+        // Réinitialise le contenu de la section des recettes
         sectionRecettes.innerHTML = "";
 
-        // ---- Génère et affiche les éléments de recette pour toutes les recettes ---------------
+        // Génère et affiche les éléments de recette pour toutes les recettes
         lesRecettes.forEach((recipe) => {
             const recetteElement = creationRecetteElement(recipe);
             sectionRecettes.innerHTML += recetteElement;
-            recettesActuelles = lesRecettes;
         });
-
-    // ---- Sinon filtrer les recettes en fonction des tags sélectionnés ---------------------
+        recettesActuelles = lesRecettes;
     } else {
-
-        // ---- Filtrer les recettes en fonction des tags ----------------------------------------
-        const recettesFiltrees = recettesActuelles.filter((recette) => {
-        
-            // ---- Récupérer les ingrédients, les appareils et les ustensiles de la recette ---------
+        // Filtrer les recettes en fonction des tags
+        const recettesFiltrees = recettesAFiltrer.filter((recette) => {
+            // Récupérer les ingrédients, les appareils et les ustensiles de la recette
             const ingredients = recette.ingredients.map((ing) => ing.ingredient.toLowerCase());
             const appareils = [recette.appliance.toLowerCase()];
             const ustensiles = recette.ustensils.map((ustensile) => ustensile.toLowerCase());
 
-            // ---- Vérifier si chaque tag est inclus dans les ingrédients, les appareils ou les ustensiles de la recette ----
+            // Vérifier si chaque tag est inclus dans les ingrédients, les appareils ou les ustensiles de la recette
             return tags.every((tag) => [...ingredients, ...appareils, ...ustensiles].includes(tag.toLowerCase()));
         });
 
-        // Filtrer les recettes en fonction de la recherche principale, si elle est effectuée
-        if (texteRecherche.length >= 3) {
-            const recettesFiltreesParRecherche = filtrerRecettes(texteRecherche, recettesFiltrees);
-            recettesActuelles = recettesFiltreesParRecherche;
-            sectionRecettes.innerHTML = recettesFiltreesParRecherche.map((recette) => creationRecetteElement(recette)).join("");
-        } else {
-            // ---- Afficher les recettes filtrées ---------------------------------------------------
-            sectionRecettes.innerHTML = recettesFiltrees.map((recette) => creationRecetteElement(recette)).join("");
+        // Mise à jour de la liste des recettes
+        recettesActuelles = recettesFiltrees;
 
-            // ---- Mise à jour de la liste des recettes ---------------------------------------------
-            recettesActuelles = recettesFiltrees;
+        // Filtrer les recettes en fonction de la recherche principale, si elle est effectuée
+        let recettesAFiltrerParRecherche;
+        if (texteRecherche.length >= 3) {
+            recettesAFiltrerParRecherche = filtrerRecettes(texteRecherche, recettesFiltrees);
+        } else {
+            recettesAFiltrerParRecherche = recettesFiltrees;
         }
+
+        // Afficher les recettes filtrées
+        sectionRecettes.innerHTML = recettesAFiltrerParRecherche.map((recette) => creationRecetteElement(recette)).join("");
     }
 }
 
@@ -694,66 +698,68 @@ function videListe(event) {
 
 
 inputRecherche.addEventListener("input", (event) => {
-
     const tagSearch = cadreTags.querySelector('.tag-search');
 
-    // ---- Récupère la valeur de l'input et supprime les espaces en début et fin de chaîne ----
+    // Récupère la valeur de l'input et supprime les espaces en début et fin de chaîne
     const texteRecherche = event.target.value.trim();
 
     if (texteRecherche.length >=3 && !tagSearch) {
         recettesActuelles =lesRecettes;
     }
 
-    // ---- On ne filtre les recettes que si l'utilisateur a tapé au moins 3 lettres ---------
+    // On ne filtre les recettes que si l'utilisateur a tapé au moins 3 lettres 
     if (texteRecherche.length >= 3) {
 
-        // ---- Vérifier si le message d'erreur est présent
+        // Vérifier si le message d'erreur est présent
         const messageErreur = sectionRecettes.querySelector('.manque-recette');
 
-        // ---- Si le message d'erreur est présent, réinitialiser la recherche
+        // Si le message d'erreur est présent, réinitialiser la recherche
         if (messageErreur) {
             recettesActuelles = lesRecettes;
         }
 
-        // ---- Filtrer les recettes en utilisant la fonction filtrerRecettes --------------------
+        // Filtrer les recettes en utilisant la fonction filtrerRecettes
         const recettesFiltrees = filtrerRecettes(texteRecherche, recettesActuelles);
         
-        // ---- Mettre à jour la variable recettesActuelles avec les recettes filtrées -----------
-        recettesActuelles = recettesFiltrees;
-
-        // ---- Afficher les recettes filtrées ---------------------------------------------------
-        afficherRecettes(recettesFiltrees);
-
-    } else if (texteRecherche.length === 0) {
-
-    // ---- Vérifie si des tags sont présents dans "cadreTags" -------------------------------    
-    if (tagSearch) {
-
-        recettesActuelles = lesRecettes; // Ici, on réinitialise recettesActuelles avec la liste complète des recettes
-
-        // ---- Récupérer les tags sélectionnés en les transformant en tableau -------------------
-        const tags = [...cadreTags.querySelectorAll(".tag-search")].map((btn) => btn.textContent.toLowerCase());
-
-        // ---- Filtrer les recettes en fonction des tags sélectionnés ---------------------------
-        const recettesFiltrees = filterRecettesParTag(tags, texteRecherche);
-
-        if (recettesFiltrees && recettesFiltrees.length > 0) {
-            // ---- Mettre à jour la variable recettesActuelles avec les recettes filtrées -----------
+        // Comparer la taille des tableaux de recettes avant et après le filtrage
+        if (recettesActuelles.length !== recettesFiltrees.length) {
+            // Mettre à jour la variable recettesActuelles avec les recettes filtrées
             recettesActuelles = recettesFiltrees;
 
-            // ---- Afficher les recettes filtrées ---------------------------------------------------
+            // Afficher les recettes filtrées
             afficherRecettes(recettesFiltrees);
-            }
-        } else {
-            // ---- Si le texte de recherche est trop court ou vide, et aucun tag n'est sélectionné, on réaffiche toutes les recettes ----
+        }
+
+    } else if (texteRecherche.length === 0 || texteRecherche.length === 2) {
+
+        // Vérifie si des tags sont présents dans "cadreTags"
+        if (tagSearch) {
+
             recettesActuelles = lesRecettes; // Ici, on réinitialise recettesActuelles avec la liste complète des recettes
 
-            // ---- Afficher toutes les recettes ---------------------------------------------------
+            // Récupérer les tags sélectionnés en les transformant en tableau
+            const tags = [...cadreTags.querySelectorAll(".tag-search")].map((btn) => btn.textContent.toLowerCase());
+
+            // Filtrer les recettes en fonction des tags sélectionnés
+            const recettesFiltrees = filterRecettesParTag(tags, texteRecherche);
+
+            // Comparer la taille des tableaux de recettes avant et après le filtrage
+            if (recettesActuelles.length !== recettesFiltrees.length) {
+                // Mettre à jour la variable recettesActuelles avec les recettes filtrées
+                recettesActuelles = recettesFiltrees;
+
+                // Afficher les recettes filtrées
+                afficherRecettes(recettesFiltrees);
+            }
+        } else {
+            // Si le texte de recherche est trop court ou vide, et aucun tag n'est sélectionné, on réaffiche toutes les recettes
+            recettesActuelles = lesRecettes; // Ici, on réinitialise recettesActuelles avec la liste complète des recettes
+
+            // Afficher toutes les recettes
             afficherRecettes(recettesActuelles);
         }
     }
 });
-
 
 //--------------------------------------------------------------------------------------//
 //     Événement pour mettre à jour les ingrédients affichés lors de la saisie dans     //

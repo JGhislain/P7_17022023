@@ -288,45 +288,67 @@ function afficherTag(elements, categorie) {
 
 function ajouterTag(tag, categorie) {
 
-    // ---- Création d'un élément span pour chaque tag ---------------------------------------
-    const tagElement = document.createElement('span');
+    // Création d'un élément span pour chaque tag
+    var tagElement = document.createElement('span');
 
-    // ---- Ajout de la classe "tag-search" --------------------------------------------------
+    // Ajout de la classe "tag-search"
     tagElement.classList.add('tag-search');
 
-    // ---- Ajout d'un background-color en fonction de la catégorie --------------------------
+    // Ajout d'un background-color en fonction de la catégorie
+    var backgroundColor = ""; // Initialisation de la variable backgroundColor
     if (categorie === "ingredient") {
-        tagElement.style.backgroundColor = "#3282F7"
+        backgroundColor = "#3282F7";
+    } else if (categorie === "appareil") {
+        backgroundColor = "#68D9A4";
+    } else if (categorie === "ustensile") {
+        backgroundColor = "#ED6454";
     }
-    else if (categorie === "appareil") {
-        tagElement.style.backgroundColor = "#68D9A4"
-    }
-    else if (categorie === "ustensile") {
-        tagElement.style.backgroundColor = "#ED6454"
-    }
+    tagElement.style.backgroundColor = backgroundColor;
 
-    // ---- Ajout du nom de l'ingrédient, ustensile ou appareil dans l'élément ---------------
+    // Ajout du nom de l'ingrédient, ustensile ou appareil dans l'élément
     tagElement.textContent = tag;
 
-    // ---- Création d'un élément "i" pour l'icône de suppression ----------------------------
-    const xIcone = document.createElement('i');
+    // Création d'un élément "i" pour l'icône de suppression
+    var xIcone = document.createElement('i');
 
-    // ---- Ajout des classes pour l'icone de suppression ------------------------------------
+    // Ajout des classes pour l'icone de suppression
     xIcone.classList.add('fas', 'fa-times', 'icone-fermeture');
 
-    // ---- Ajout de l'icône de suppression à l'élément span ---------------------------------
+    // Ajout de l'icône de suppression à l'élément span
     tagElement.appendChild(xIcone);
 
-    // ---- Ajout d'un événement au clic sur l'icone de suppression pour retirer l'élément ----
-    xIcone.addEventListener('click', () => {
+    // Ajout d'un événement au clic sur l'icone de suppression pour retirer l'élément
+    xIcone.onclick = function() {
 
-        // ---- Supprime l'élément span créé au clic sur l'icone ---------------------------------
+        // Supprime l'élément span créé au clic sur l'icone
         cadreTags.removeChild(tagElement);
-        const tags = Array.from(cadreTags.querySelectorAll('.tag-search'), (tagRestant) => tagRestant.textContent);
+
+        // Recréer les tags restants en les transformant en tableau
+        var tags = [];
+        var tagElements = cadreTags.querySelectorAll('.tag-search');
+        for (var i = 0; i < tagElements.length; i++) {
+            tags.push(tagElements[i].textContent);
+        }
+
         filterRecettesParTag(tags)
-    });
-    
-    // ---- Ajout de l'élément span créé à la section "cadreTags" et on supprime la valeur dans la liste des éléments ----
+
+        // Récupère la valeur de la barre de recherche principale et supprime les espaces en début et fin de chaîne
+        var texteRecherche = inputRecherche.value.trim();
+
+        // Vérifie si la longueur du texte de recherche est supérieure ou égale à 3
+        if (texteRecherche.length >= 3) {
+            // Filtrer les recettes en utilisant la fonction filtrerRecettes
+            var recettesFiltrees = filtrerRecettes(texteRecherche, recettesActuelles);
+
+            // Mettre à jour la variable recettesActuelles avec les recettes filtrées
+            recettesActuelles = recettesFiltrees;
+
+            // Afficher les recettes filtrées
+            afficherRecettes(recettesFiltrees);
+        }
+    };
+
+    // Ajout de l'élément span créé à la section "cadreTags" et on supprime la valeur dans la liste des éléments
     cadreTags.appendChild(tagElement);
     inputIngredient.value = "";
     inputAppareil.value = "";
@@ -434,43 +456,69 @@ function filtrerUstensiles(texteRecherche) {
 //         Fonction pour filter les recettes en fonction des tags sélectionnés          //
 //--------------------------------------------------------------------------------------//
 
-function filterRecettesParTag(tags) {
-    // ---- Si il n'y a plus de tags, affichez toutes les recettes ---------------------------
-    if (tags.length === 0) {
+function filterRecettesParTag(tags, texteRecherche = "") {
+    // Choisissez les recettes à filtrer en fonction du texte de la recherche
+    let recettesAFiltrer;
+    if (texteRecherche.length >= 3) {
+        recettesAFiltrer = recettesActuelles;
+    } else {
+        recettesAFiltrer = lesRecettes;
+    }
 
-        // ---- Réinitialise le contenu de la section des recettes -------------------------------
+    // Si il n'y a plus de tags, affichez toutes les recettes
+    if (tags.length === 0) {
+        // Réinitialise le contenu de la section des recettes
         sectionRecettes.innerHTML = "";
 
-        // ---- Génère et affiche les éléments de recette pour toutes les recettes ---------------
+        // Génère et affiche les éléments de recette pour toutes les recettes
         for (let i = 0; i < lesRecettes.length; i++) {
             const recetteElement = creationRecetteElement(lesRecettes[i]);
             sectionRecettes.innerHTML += recetteElement;
         }
         recettesActuelles = lesRecettes;
-
-    // ---- Sinon filtrer les recettes en fonction des tags sélectionnés ---------------------
     } else {
+        // Filtrer les recettes en fonction des tags
+        let recettesFiltrees = [];
+        for (let i = 0; i < recettesAFiltrer.length; i++) {
+            // Récupérer les ingrédients, les appareils et les ustensiles de la recette
+            let ingredients = [];
+            for (let j = 0; j < recettesAFiltrer[i].ingredients.length; j++) {
+                ingredients.push(recettesAFiltrer[i].ingredients[j].ingredient.toLowerCase());
+            }
+            const appareils = [recettesAFiltrer[i].appliance.toLowerCase()];
+            let ustensiles = [];
+            for (let j = 0; j < recettesAFiltrer[i].ustensils.length; j++) {
+                ustensiles.push(recettesAFiltrer[i].ustensils[j].toLowerCase());
+            }
 
-        // ---- Filtrer les recettes en fonction des tags ----------------------------------------
-        const recettesFiltrees = lesRecettes.filter((recette) => {
-        
-            // ---- Récupérer les ingrédients, les appareils et les ustensiles de la recette ---------
-            const ingredients = recette.ingredients.map((ing) => ing.ingredient.toLowerCase());
-            const appareils = [recette.appliance.toLowerCase()];
-            const ustensiles = recette.ustensils.map((ustensile) => ustensile.toLowerCase());
-
-            // ---- Vérifier si chaque tag est inclus dans les ingrédients, les appareils ou les ustensiles de la recette ----
-            return tags.every((tag) => [...ingredients, ...appareils, ...ustensiles].includes(tag.toLowerCase()));
-        });
-        // ---- Afficher les recettes filtrées ---------------------------------------------------
-        sectionRecettes.innerHTML = "";
-        for (let i = 0; i < recettesFiltrees.length; i++) {
-            const recetteElement = creationRecetteElement(recettesFiltrees[i]);
-            sectionRecettes.innerHTML += recetteElement;
+            // Vérifier si chaque tag est inclus dans les ingrédients, les appareils ou les ustensiles de la recette
+            let tagIncluded = true;
+            for (let j = 0; j < tags.length; j++) {
+                if (![...ingredients, ...appareils, ...ustensiles].includes(tags[j].toLowerCase())) {
+                    tagIncluded = false;
+                }
+            }
+            if (tagIncluded) {
+                recettesFiltrees.push(recettesAFiltrer[i]);
+            }
         }
 
-        // ---- Mise à jour de la liste des recettes ---------------------------------------------
+        // Mise à jour de la liste des recettes
         recettesActuelles = recettesFiltrees;
+
+        // Filtrer les recettes en fonction de la recherche principale, si elle est effectuée
+        let recettesAFiltrerParRecherche;
+        if (texteRecherche.length >= 3) {
+            recettesAFiltrerParRecherche = filtrerRecettes(texteRecherche, recettesFiltrees);
+        } else {
+            recettesAFiltrerParRecherche = recettesFiltrees;
+        }
+
+        // Afficher les recettes filtrées
+        sectionRecettes.innerHTML = "";
+        for (let i = 0; i < recettesAFiltrerParRecherche.length; i++) {
+            sectionRecettes.innerHTML += creationRecetteElement(recettesAFiltrerParRecherche[i]);
+        }
     }
 }
 
@@ -703,22 +751,66 @@ function videListe(event) {
 
 inputRecherche.addEventListener("input", (event) => {
 
-    // ---- Récupère la valeur de l'input et supprime les espaces en début et fin de chaîne ----
+    const tagSearch = cadreTags.querySelector('.tag-search');
+
+    // Récupère la valeur de l'input et supprime les espaces en début et fin de chaîne
     const texteRecherche = event.target.value.trim();
 
+    if (texteRecherche.length >=3 && !tagSearch) {
+        recettesActuelles = lesRecettes;
+    }
 
-    // ---- On ne filtre les recettes que si l'utilisateur a tapé au moins 3 lettres ---------
+    // On ne filtre les recettes que si l'utilisateur a tapé au moins 3 lettres
     if (texteRecherche.length >= 3) {
 
-        // ---- Filtrer les recettes en utilisant la fonction filtrerRecettes --------------------
+        // Vérifier si le message d'erreur est présent
+        const messageErreur = sectionRecettes.querySelector('.manque-recette');
+
+        // Si le message d'erreur est présent, réinitialiser la recherche
+        if (messageErreur) {
+            recettesActuelles = lesRecettes;
+        }
+
+        // Filtrer les recettes en utilisant la fonction filtrerRecettes
         const recettesFiltrees = filtrerRecettes(texteRecherche, recettesActuelles);
+        
+        // Mettre à jour la variable recettesActuelles avec les recettes filtrées
+        recettesActuelles = recettesFiltrees;
 
-        // ---- Afficher les recettes filtrées ---------------------------------------------------
-        afficherRecettes(recettesFiltrees);       
-    } else {
+        // Afficher les recettes filtrées
+        afficherRecettes(recettesFiltrees);
 
-        // ---- Si le texte de recherche est trop court ou vide, on réaffiche toutes les recettes ----
-        afficherRecettes(recettesActuelles);
+    } else if (texteRecherche.length === 0 || texteRecherche.length === 2) {
+
+        // Vérifie si des tags sont présents dans "cadreTags"
+        if (tagSearch) {
+
+            recettesActuelles = lesRecettes; // Ici, on réinitialise recettesActuelles avec la liste complète des recettes
+
+            // Récupérer les tags sélectionnés en les transformant en tableau
+            const btns = cadreTags.querySelectorAll(".tag-search");
+            let tags = [];
+            for (let i = 0; i < btns.length; i++) {
+                tags.push(btns[i].textContent.toLowerCase());
+            }
+
+            // Filtrer les recettes en fonction des tags sélectionnés
+            const recettesFiltrees = filterRecettesParTag(tags, texteRecherche);
+
+            if (recettesFiltrees && recettesFiltrees.length > 0) {
+                // Mettre à jour la variable recettesActuelles avec les recettes filtrées
+                recettesActuelles = recettesFiltrees;
+
+                // Afficher les recettes filtrées
+                afficherRecettes(recettesFiltrees);
+            }
+        } else {
+            // Si le texte de recherche est trop court ou vide, et aucun tag n'est sélectionné, on réaffiche toutes les recettes
+            recettesActuelles = lesRecettes; // Ici, on réinitialise recettesActuelles avec la liste complète des recettes
+
+            // Afficher toutes les recettes
+            afficherRecettes(recettesActuelles);
+        }
     }
 });
 
