@@ -460,7 +460,7 @@ function filterRecettesParTag(tags, texteRecherche = "") {
     // Choisissez les recettes à filtrer en fonction du texte de la recherche
     let recettesAFiltrer;
     if (texteRecherche.length >= 3) {
-        recettesAFiltrer = recettesActuelles;
+        recettesAFiltrer = filtrerRecettes(texteRecherche, recettesActuelles);
     } else {
         recettesAFiltrer = lesRecettes;
     }
@@ -899,7 +899,7 @@ cadreListeIngredients.addEventListener('click', (event) => {
         }
 
         // ---- Appeler la fonction pour filtrer les recettes avec les tags sélectionnés ---------
-        filterRecettesParTag(tags);
+        filterRecettesParTag(tags, inputRecherche.value.trim());
     }
 });
 
@@ -922,7 +922,7 @@ cadreListeAppareils.addEventListener('click', (event) => {
         }
 
         // ---- Appeler la fonction pour filtrer les recettes avec les tags sélectionnés ---------
-        filterRecettesParTag(tags);
+        filterRecettesParTag(tags, inputRecherche.value.trim());
     }
 });
 
@@ -945,7 +945,7 @@ cadreListeUstensiles.addEventListener('click', (event) => {
         }
         
         // ---- Appeler la fonction pour filtrer les recettes avec les tags sélectionnés ---------
-        filterRecettesParTag(tags);
+        filterRecettesParTag(tags, inputRecherche.value.trim());
     }
 });
 
