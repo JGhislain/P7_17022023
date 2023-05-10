@@ -374,12 +374,18 @@ function filtrerIngredients(texteRecherche) {
         const recette = lesRecettes[i];
 
         // ---- Création d'un tableau pour stocker les noms des ingrédients de la recette actuelle ----
-        const ingredientsRecette = recette.ingredients.map((ing) => ing.ingredient);
+        let ingredientsRecette = [];
+        for (let k = 0; k < recette.ingredients.length; k++) {
+            ingredientsRecette.push(recette.ingredients[k].ingredient);
+        }
 
         // ---- Filtrage du tableau d'ingrédients de la recette pour ne garder que ceux qui correspondent à la recherche ----
-        const ingredientsFiltresRecette = ingredientsRecette.filter((ing) => 
-        ing.toLowerCase().includes(texteRecherche.toLowerCase())
-        );
+        let ingredientsFiltresRecette = [];
+        for (let j = 0; j < ingredientsRecette.length; j++) {
+            if (ingredientsRecette[j].toLowerCase().includes(texteRecherche.toLowerCase())) {
+                ingredientsFiltresRecette.push(ingredientsRecette[j]);
+            }
+        }
 
         // ---- Ajout des ingrédients filtrés de la recette actuelle dans le Set -----------------
         for (let j = 0; j < ingredientsFiltresRecette.length; j++) {

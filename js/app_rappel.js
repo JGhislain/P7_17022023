@@ -730,7 +730,7 @@ inputRecherche.addEventListener("input", (event) => {
             afficherRecettes(recettesFiltrees);
         }
 
-    } else if (texteRecherche.length === 0 || (texteRecherche.length === 2 && !tagSearch)) {
+    } else if (texteRecherche.length === 0 || texteRecherche.length === 2) {
 
         // Vérifie si des tags sont présents dans "cadreTags"
         if (tagSearch) {
@@ -744,7 +744,7 @@ inputRecherche.addEventListener("input", (event) => {
             const recettesFiltrees = filterRecettesParTag(tags, texteRecherche);
 
             // Comparer la taille des tableaux de recettes avant et après le filtrage
-            if (recettesActuelles.length !== recettesFiltrees.length) {
+            if (recettesFiltrees && recettesFiltrees.length > 0) {
                 // Mettre à jour la variable recettesActuelles avec les recettes filtrées
                 recettesActuelles = recettesFiltrees;
 
